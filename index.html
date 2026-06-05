@@ -88,7 +88,13 @@
                     <i class="ph-bold ph-chart-polar text-2xl text-white"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-black tracking-wide">WB DATA HUB</h1>
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-black tracking-wide">WB DATA HUB</h1>
+                        <!-- 新增：智能日期范围展示胶囊 -->
+                        <span id="report-date-range" class="hidden text-xs bg-white/20 px-3 py-1 rounded-full border border-white/30 backdrop-blur-md font-bold tracking-normal flex items-center gap-1.5 shadow-sm">
+                            <i class="ph-bold ph-calendar-blank text-sm"></i> <span id="date-range-text"></span>
+                        </span>
+                    </div>
                     <p class="text-white/80 text-xs uppercase tracking-widest font-bold mt-0.5">多维利润核算矩阵</p>
                 </div>
             </div>
@@ -135,7 +141,7 @@
                                 <i class="ph-duotone ph-file-xls text-4xl text-indigo-500"></i>
                             </div>
                             <h3 class="text-xl font-extrabold text-slate-800">拖拽 WB 财务报告 (.xlsx) 至此</h3>
-                            <p class="text-sm text-slate-500 mt-2 font-medium">引擎将瞬间吞吐数据，凌空核算利润与成本</p>
+                            <p class="text-sm text-slate-500 mt-2 font-medium">引擎将瞬间吞吐数据，凌空核算利润与时间跨度</p>
                         </div>
                         <div id="loading" class="hidden flex-col items-center justify-center pointer-events-none py-6 relative z-10">
                             <div class="spinner mb-4"></div>
@@ -170,10 +176,10 @@
                                     <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 border border-blue-100 shadow-sm">
                                         <i class="ph-bold ph-wallet text-2xl"></i>
                                     </div>
-                                    <p class="text-slate-500 font-extrabold text-sm tracking-wider mb-1 uppercase">实际收入总计 (₽)</p>
+                                    <p class="text-slate-500 font-extrabold text-sm tracking-wider mb-1">平台实际回款</p>
                                     <div class="text-4xl font-extrabold text-slate-800"><span id="val_shouru">0.00</span> <span class="text-lg text-slate-400 font-bold">₽</span></div>
                                 </div>
-                                <p class="relative z-10 text-blue-600 text-sm mt-4 font-bold tracking-wider uppercase">平台回款</p>
+                                <p class="relative z-10 text-slate-400 text-xs mt-4 font-bold">等于: 签收金额 - 退货金额</p>
                             </div>
                             
                             <!-- 匹配发货总成本 -->
@@ -184,7 +190,7 @@
                                         <i class="ph-bold ph-package text-2xl"></i>
                                         <div id="cogs-warning-dot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full animate-ping"></div>
                                     </div>
-                                    <p class="text-slate-500 font-extrabold text-sm tracking-wider mb-1 uppercase">匹配发货总成本 (COGS)</p>
+                                    <p class="text-slate-500 font-extrabold text-sm tracking-wider mb-1">匹配发货总成本 (COGS)</p>
                                     <div class="text-4xl font-extrabold text-slate-800"><span id="val_cogs">0.00</span> <span class="text-lg text-slate-400 font-bold">₽</span></div>
                                 </div>
                                 <p class="relative z-10 text-slate-400 text-xs mt-4 font-bold">依据本地数据库实时匹配换算</p>
@@ -206,17 +212,16 @@
                             <p class="text-center text-xs text-slate-400 font-bold mt-4">展示 利润、成本 与 平台费用的真实占比</p>
                         </div>
 
-                        <!-- 右侧：带有全套线条图底纹的明细板块 -->
+                        <!-- 右侧：明细网格 -->
                         <div class="xl:col-span-7 glass-panel rounded-3xl p-6 shadow-glass flex flex-col">
                             <h2 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-2">
                                 WB 扣除和补偿板块明细
                             </h2>
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1">
                                 
-                                <!-- 佣金 -->
                                 <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-brand-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-duotone ph-receipt text-[60px] text-brand-600"></i>
+                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
+                                        <i class="ph-bold ph-receipt text-[60px] text-brand-600"></i>
                                     </div>
                                     <div class="flex justify-between items-start mb-3 relative z-10">
                                         <p class="text-slate-500 font-extrabold text-xs uppercase">佣金</p>
@@ -225,10 +230,9 @@
                                     <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_yongjin">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
                                 </div>
 
-                                <!-- 物流费 -->
                                 <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-duotone ph-truck text-[60px] text-blue-600"></i>
+                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
+                                        <i class="ph-fill ph-truck text-[60px] text-blue-600"></i>
                                     </div>
                                     <div class="flex justify-between items-start mb-3 relative z-10">
                                         <p class="text-slate-500 font-extrabold text-xs uppercase">物流费</p>
@@ -237,10 +241,9 @@
                                     <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_wuliu">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
                                 </div>
 
-                                <!-- 仓储费 -->
                                 <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-purple-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-duotone ph-warehouse text-[60px] text-purple-600"></i>
+                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
+                                        <i class="ph-fill ph-warehouse text-[60px] text-purple-600"></i>
                                     </div>
                                     <div class="flex justify-between items-start mb-3 relative z-10">
                                         <p class="text-slate-500 font-extrabold text-xs uppercase">仓储费</p>
@@ -249,10 +252,9 @@
                                     <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_cangchu">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
                                 </div>
 
-                                <!-- 银行收单 -->
                                 <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-orange-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-duotone ph-bank text-[60px] text-orange-600"></i>
+                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
+                                        <i class="ph-fill ph-bank text-[60px] text-orange-600"></i>
                                     </div>
                                     <div class="flex justify-between items-start mb-3 relative z-10">
                                         <p class="text-slate-500 font-extrabold text-xs uppercase">银行收单</p>
@@ -261,10 +263,9 @@
                                     <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_yinxing">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
                                 </div>
 
-                                <!-- 其它/推广 -->
                                 <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-duotone ph-megaphone text-[60px] text-slate-500"></i>
+                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
+                                        <i class="ph-fill ph-megaphone text-[60px] text-slate-600"></i>
                                     </div>
                                     <div class="flex justify-between items-start mb-3 relative z-10">
                                         <p class="text-slate-500 font-extrabold text-xs uppercase">其它/推广</p>
@@ -273,10 +274,9 @@
                                     <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_qita">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
                                 </div>
 
-                                <!-- 验收 -->
                                 <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-duotone ph-check-square-offset text-[60px] text-teal-600"></i>
+                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
+                                        <i class="ph-fill ph-check-square-offset text-[60px] text-teal-600"></i>
                                     </div>
                                     <div class="flex justify-between items-start mb-3 relative z-10">
                                         <p class="text-slate-500 font-extrabold text-xs uppercase">验收</p>
@@ -285,27 +285,24 @@
                                     <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_yanshou">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
                                 </div>
 
-                                <!-- 罚款与额外付款 -->
-                                <div class="bg-white p-5 rounded-2xl border border-rose-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-duotone ph-warning-octagon text-[60px] text-rose-600"></i>
+                                <div class="bg-rose-50/70 p-5 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden group">
+                                    <div class="absolute -right-2 -bottom-2 opacity-[0.06] group-hover:scale-110 group-hover:opacity-[0.15] transition-all duration-300 pointer-events-none">
+                                        <i class="ph-fill ph-warning-octagon text-[60px] text-rose-600"></i>
                                     </div>
-                                    <p class="text-rose-600 font-extrabold text-xs uppercase mb-3 relative z-10">罚款</p>
+                                    <p class="text-rose-600 font-black text-xs mb-3 relative z-10">罚款</p>
                                     <p class="font-black text-2xl text-rose-700 tracking-tight relative z-10"><span id="val_fakuan">0.00</span> <span class="text-sm font-bold text-rose-400">₽</span></p>
                                 </div>
-                                
-                                <div class="bg-white p-5 rounded-2xl border border-amber-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-duotone ph-plus-circle text-[60px] text-amber-600"></i>
+                                <div class="bg-amber-50/70 p-5 rounded-2xl border border-amber-100 shadow-sm relative overflow-hidden group">
+                                    <div class="absolute -right-2 -bottom-2 opacity-[0.06] group-hover:scale-110 group-hover:opacity-[0.15] transition-all duration-300 pointer-events-none">
+                                        <i class="ph-fill ph-plus-circle text-[60px] text-amber-600"></i>
                                     </div>
-                                    <p class="text-amber-600 font-extrabold text-xs uppercase mb-3 relative z-10">额外付款</p>
+                                    <p class="text-amber-600 font-black text-xs mb-3 relative z-10">额外付款</p>
                                     <p class="font-black text-2xl text-amber-700 tracking-tight relative z-10"><span id="val_ewai">0.00</span> <span class="text-sm font-bold text-amber-400">₽</span></p>
                                 </div>
 
-                                <!-- 补偿项 -->
                                 <div class="bg-emerald-50/40 p-5 rounded-2xl border border-emerald-100 shadow-sm col-span-1 sm:col-span-1 flex flex-col justify-center relative overflow-hidden group">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-duotone ph-money text-[60px] text-emerald-600"></i>
+                                    <div class="absolute -right-2 -bottom-2 opacity-[0.06] group-hover:scale-110 group-hover:opacity-[0.15] transition-all duration-300 pointer-events-none">
+                                        <i class="ph-fill ph-money text-[60px] text-emerald-600"></i>
                                     </div>
                                     <p class="text-emerald-700 font-extrabold text-xs mb-3 uppercase relative z-10">平台补偿</p>
                                     <div class="text-xs text-emerald-800 font-bold flex justify-between relative z-10">缺陷: <span>+<span id="val_quexian">0.00</span> ₽</span></div>
@@ -318,40 +315,28 @@
                     <!-- 基础业务转化指标 -->
                     <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                         
-                        <!-- 签收明细 -->
                         <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-brand-300 transition-colors relative overflow-hidden group">
-                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                <i class="ph-duotone ph-package text-[60px] text-slate-500"></i>
-                            </div>
+                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-110 group-hover:opacity-[0.1] transition-transform pointer-events-none"><i class="ph-fill ph-package text-[70px]"></i></div>
                             <p class="text-xs font-black text-slate-400 mb-2 uppercase relative z-10">签收明细</p>
                             <p class="font-black text-2xl text-slate-800 relative z-10"><span id="val_qianshou">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
                             <p class="text-sm font-bold text-emerald-600 mt-1 relative z-10"><span id="val_qianshou_jian">0</span> <span class="text-xs">件</span></p>
                         </div>
 
-                        <!-- 退货明细 -->
                         <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-rose-300 transition-colors relative overflow-hidden group">
-                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                <i class="ph-duotone ph-arrow-u-down-left text-[60px] text-rose-500"></i>
-                            </div>
+                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-110 group-hover:opacity-[0.1] transition-transform pointer-events-none"><i class="ph-fill ph-arrow-u-down-left text-[70px]"></i></div>
                             <p class="text-xs font-black text-slate-400 mb-2 uppercase relative z-10">退货占压</p>
                             <p class="font-black text-2xl text-rose-600 relative z-10"><span id="val_tuihuo">0.00</span> <span class="text-sm font-bold text-rose-400">₽</span></p>
                             <p class="text-sm font-bold text-rose-500 mt-1 relative z-10"><span id="val_tuihuo_jian">0</span> <span class="text-xs">件</span></p>
                         </div>
 
-                        <!-- 平均客单价 -->
                         <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-brand-300 transition-colors relative overflow-hidden group">
-                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                <i class="ph-duotone ph-tag text-[60px] text-slate-500"></i>
-                            </div>
+                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-110 group-hover:opacity-[0.1] transition-transform pointer-events-none"><i class="ph-fill ph-tag text-[70px]"></i></div>
                             <p class="text-xs font-black text-slate-400 mb-2 uppercase relative z-10">平均客单价</p>
                             <p class="font-black text-2xl text-slate-800 mt-3 relative z-10"><span id="val_pingjun_shoujia">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
                         </div>
 
-                        <!-- 平均WB折扣 & 实际交货量 -->
                         <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-brand-300 transition-colors flex flex-col justify-between group relative overflow-hidden">
-                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                <i class="ph-duotone ph-percent text-[60px] text-slate-500"></i>
-                            </div>
+                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-110 group-hover:opacity-[0.1] transition-transform pointer-events-none"><i class="ph-fill ph-percent text-[70px]"></i></div>
                             <div class="relative z-10">
                                 <p class="text-xs font-black text-slate-400 mb-1 uppercase">平均WB折扣</p>
                                 <p class="font-black text-2xl text-brand-600 mt-1"><span id="val_pingtai_zhekou">0.00</span> <span class="text-sm font-bold text-brand-400">%</span></p>
@@ -362,11 +347,8 @@
                             </div>
                         </div>
 
-                        <!-- 订单签收率 -->
                         <div class="p-5 rounded-2xl shadow-sm border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 transition-colors relative overflow-hidden flex flex-col justify-center group">
-                            <div class="absolute -right-2 -bottom-2 opacity-[0.1] group-hover:scale-150 group-hover:-translate-x-4 group-hover:-translate-y-4 group-hover:opacity-[0.25] transition-all duration-300 pointer-events-none">
-                                <i class="ph-duotone ph-chart-line-up text-[60px] text-emerald-500"></i>
-                            </div>
+                            <div class="absolute right-0 top-1/2 transform -translate-y-1/2 opacity-[0.08] group-hover:scale-110 group-hover:opacity-[0.15] transition-all duration-300 pointer-events-none"><i class="ph-fill ph-chart-line-up text-[90px] -mr-4"></i></div>
                             <p class="text-xs font-black text-emerald-700 mb-2 uppercase relative z-10">订单签收率</p>
                             <p class="font-black text-4xl text-emerald-600 mt-1 tracking-tight relative z-10"><span id="val_qianshou_lv">0.00</span><span class="text-2xl font-bold text-emerald-500">%</span></p>
                         </div>
@@ -481,6 +463,32 @@
             let s = String(val).replace(/\s/g, '').replace(',', '.');
             let n = parseFloat(s);
             return isNaN(n) ? 0 : n;
+        }
+        
+        // 核心：处理复杂与杂乱 WB 日期格式的解析引擎
+        function parseWBDate(val) {
+            if (!val) return null;
+            if (typeof val === 'number') {
+                let dateObj = new Date(Math.round((val - 25569) * 86400 * 1000));
+                return new Date(dateObj.getTime() + dateObj.getTimezoneOffset() * 60 * 1000);
+            }
+            if (typeof val === 'string') {
+                let str = val.trim();
+                let s = str.split(' ')[0];
+                if (s.includes('.')) {
+                    let p = s.split('.');
+                    if (p.length === 3 && p[2].length === 4) return new Date(p[2], p[1]-1, p[0]);
+                }
+                if (s.includes('-')) {
+                    let p = s.split('-');
+                    if (p.length === 3) {
+                        if (p[0].length === 4) return new Date(p[0], p[1]-1, p[2]);
+                    }
+                }
+                let parsed = new Date(str);
+                if (!isNaN(parsed.getTime())) return parsed;
+            }
+            return null;
         }
 
         function animateValue(id, start, end, duration, isCurrency = false) {
@@ -655,6 +663,10 @@
             let quexian_peichang = 0, sunhai_peichang = 0, fakuan = 0, ewai_fukuan = 0;
             let total_cogs = 0; 
             let missingSKUs = new Set(); 
+            
+            // 日期追踪器
+            let minTime = Infinity;
+            let maxTime = -Infinity;
 
             for (let i = 0; i < json.length; i++) {
                 const row = json[i];
@@ -670,6 +682,16 @@
                 const val_AI = parseWBNumber(row[34]); const val_AK = parseWBNumber(row[36]); const val_AO = parseWBNumber(row[40]);
                 const val_AP = parseWBNumber(row[41]); const val_BH = parseWBNumber(row[59]); const val_BI = parseWBNumber(row[60]);
                 const val_BJ = parseWBNumber(row[61]);
+
+                // ★ 修改：日期追踪逻辑 - 仅以出售日期(M列, index 12)为准
+                if (SALE_STATUS.includes(status_K) || RETURN_STATUS.includes(status_K)) {
+                    const dateM = parseWBDate(row[12]);
+                    if (dateM) {
+                        let t = dateM.getTime();
+                        if (t < minTime) minTime = t;
+                        if (t > maxTime) maxTime = t;
+                    }
+                }
 
                 let unit_cogs_rub = 0; 
                 if (current_wb_id && (SALE_STATUS.includes(status_K) || RETURN_STATUS.includes(status_K))) {
@@ -704,6 +726,19 @@
                 if (damage_status.includes(status_K)) {
                     if (status_J === "Продажа") sunhai_peichang += val_AH; if (status_J === "Возврат") sunhai_peichang -= val_AH;
                 }
+            }
+
+            // 渲染标题处的日期跨度
+            const dateRangeEl = document.getElementById('report-date-range');
+            const dateTextEl = document.getElementById('date-range-text');
+            if (minTime !== Infinity && maxTime !== -Infinity) {
+                const d1 = new Date(minTime);
+                const d2 = new Date(maxTime);
+                const formatD = (d) => `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+                dateTextEl.innerText = `${formatD(d1)} - ${formatD(d2)}`;
+                dateRangeEl.classList.remove('hidden');
+            } else {
+                dateRangeEl.classList.add('hidden');
             }
 
             const shouru = qianshou_T - tuihuo_T;
