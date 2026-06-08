@@ -168,32 +168,45 @@
                             </div>
                         </div>
 
-                        <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4 xl:gap-6">
                             <!-- 实际收入 -->
-                            <div class="glass-panel rounded-3xl p-8 modern-hover relative overflow-hidden flex flex-col justify-between">
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-full blur-3xl -mr-10 -mt-10 opacity-60"></div>
+                            <div class="glass-panel rounded-3xl p-6 modern-hover relative overflow-hidden flex flex-col justify-between">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-blue-100 rounded-full blur-3xl -mr-8 -mt-8 opacity-60"></div>
                                 <div class="relative z-10">
-                                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 border border-blue-100 shadow-sm">
-                                        <i class="ph-bold ph-wallet text-2xl"></i>
+                                    <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 border border-blue-100 shadow-sm">
+                                        <i class="ph-bold ph-wallet text-xl"></i>
                                     </div>
-                                    <p class="text-slate-500 font-extrabold text-sm tracking-wider mb-1">平台实际回款</p>
-                                    <div class="text-4xl font-extrabold text-slate-800"><span id="val_shouru">0.00</span> <span class="text-lg text-slate-400 font-bold">₽</span></div>
+                                    <p class="text-slate-500 font-extrabold text-[13px] tracking-wider mb-1">平台实际回款</p>
+                                    <div class="text-3xl font-extrabold text-slate-800"><span id="val_shouru">0.00</span> <span class="text-base text-slate-400 font-bold ml-1">₽</span></div>
                                 </div>
-                                <p class="relative z-10 text-slate-400 text-xs mt-4 font-bold">等于: 签收金额 - 退货金额</p>
+                                <p class="relative z-10 text-slate-400 text-[11px] mt-4 font-bold">等于: 签收金额 - 退货金额</p>
                             </div>
                             
-                            <!-- 匹配发货总成本 -->
-                            <div class="glass-panel rounded-3xl p-8 modern-hover relative overflow-hidden flex flex-col justify-between border-l-4 border-l-orange-400">
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-orange-100 rounded-full blur-3xl -mr-10 -mt-10 opacity-60"></div>
+                            <!-- WB销售总额 (SPP) -->
+                            <div class="glass-panel rounded-3xl p-6 modern-hover relative overflow-hidden flex flex-col justify-between border-t-4 sm:border-t-0 sm:border-l-4 border-purple-400">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-purple-100 rounded-full blur-3xl -mr-8 -mt-8 opacity-60"></div>
                                 <div class="relative z-10">
-                                    <div class="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-4 border border-orange-100 shadow-sm relative">
-                                        <i class="ph-bold ph-package text-2xl"></i>
-                                        <div id="cogs-warning-dot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full animate-ping"></div>
+                                    <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3 border border-purple-100 shadow-sm">
+                                        <i class="ph-bold ph-storefront text-xl"></i>
                                     </div>
-                                    <p class="text-slate-500 font-extrabold text-sm tracking-wider mb-1">匹配发货总成本 (COGS)</p>
-                                    <div class="text-4xl font-extrabold text-slate-800"><span id="val_cogs">0.00</span> <span class="text-lg text-slate-400 font-bold">₽</span></div>
+                                    <p class="text-slate-500 font-extrabold text-[13px] tracking-wider mb-1">WB销售总额(SPP)</p>
+                                    <div class="text-3xl font-extrabold text-slate-800"><span id="val_wb_xiaoshou">0.00</span> <span class="text-base text-slate-400 font-bold ml-1">₽</span></div>
                                 </div>
-                                <p class="relative z-10 text-slate-400 text-xs mt-4 font-bold">依据本地数据库实时匹配换算</p>
+                                <p class="relative z-10 text-slate-400 text-[11px] mt-4 font-bold">包含SPP的签收GMV</p>
+                            </div>
+
+                            <!-- 匹配发货总成本 -->
+                            <div class="glass-panel rounded-3xl p-6 modern-hover relative overflow-hidden flex flex-col justify-between border-t-4 sm:border-t-0 sm:border-l-4 border-orange-400">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-orange-100 rounded-full blur-3xl -mr-8 -mt-8 opacity-60"></div>
+                                <div class="relative z-10">
+                                    <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-3 border border-orange-100 shadow-sm relative">
+                                        <i class="ph-bold ph-package text-xl"></i>
+                                        <div id="cogs-warning-dot" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></div>
+                                    </div>
+                                    <p class="text-slate-500 font-extrabold text-[13px] tracking-wider mb-1">匹配发货总成本</p>
+                                    <div class="text-3xl font-extrabold text-slate-800"><span id="val_cogs">0.00</span> <span class="text-base text-slate-400 font-bold ml-1">₽</span></div>
+                                </div>
+                                <p class="relative z-10 text-slate-400 text-[11px] mt-4 font-bold">依据本地数据库实时换算</p>
                             </div>
                         </div>
                     </div>
@@ -780,6 +793,7 @@
             
             animateValue('val_net_profit', 0, net_profit, useAnimation ? 1500 : 0, true);
             animateValue('val_shouru', 0, shouru, animSpeed, true);
+            animateValue('val_wb_xiaoshou', 0, wb_xiaoshou, animSpeed, true);
             animateValue('val_cogs', 0, total_cogs, animSpeed, true);
             
             animateValue('val_yongjin', 0, yongjin, animSpeed, true); animateValue('pct_yongjin', 0, pct_yongjin, animSpeed, false);
