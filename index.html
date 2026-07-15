@@ -25,13 +25,16 @@
                     },
                     boxShadow: {
                         'glass': '0 10px 40px -10px rgba(0,0,0,0.06)',
-                        'glow': '0 0 20px rgba(192, 38, 211, 0.4)'
+                        'glow': '0 0 20px rgba(192, 38, 211, 0.4)',
+                        'floating': '0 15px 35px -5px rgba(0,0,0,0.15)'
                     }
                 }
             }
         }
     </script>
+    
     <style>
+        /* === 基础与大盘样式 === */
         body { 
             background-color: #f4f7f9; 
             background-image: radial-gradient(#dbeafe 1px, transparent 1px);
@@ -44,35 +47,72 @@
             overflow: hidden;
         }
         .hero-aurora::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -10%;
-            width: 50%; height: 200%;
+            content: ''; position: absolute; top: -50%; left: -10%; width: 50%; height: 200%;
             background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
-            transform: rotate(30deg);
-            pointer-events: none;
+            transform: rotate(30deg); pointer-events: none;
         }
-        .profit-card {
-            background: linear-gradient(135deg, #c026d3 0%, #701a75 100%);
-            box-shadow: 0 20px 40px -15px rgba(112, 26, 117, 0.4);
-        }
-        .profit-card.loss {
-            background: linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%);
-            box-shadow: 0 20px 40px -15px rgba(127, 29, 29, 0.4);
-        }
-        .glass-panel { 
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-        }
+        .profit-card { background: linear-gradient(135deg, #c026d3 0%, #701a75 100%); box-shadow: 0 20px 40px -15px rgba(112, 26, 117, 0.4); }
+        .profit-card.loss { background: linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%); box-shadow: 0 20px 40px -15px rgba(127, 29, 29, 0.4); }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); }
         .modern-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .modern-hover:hover { transform: translateY(-4px); box-shadow: 0 15px 35px -10px rgba(0,0,0,0.1); border-color: rgba(192,38,211,0.2); }
+        input[type="file"].hidden-upload { font-size: 0; opacity: 0; cursor: pointer; }
         
-        input[type="file"] { font-size: 0; opacity: 0; cursor: pointer; }
-        .spinner { border: 3px solid rgba(192, 38, 211, 0.1); border-left-color: #c026d3; border-radius: 50%; width: 28px; height: 28px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* === SKU 精算台表格专用样式 === */
+        .table-container::-webkit-scrollbar { height: 10px; width: 10px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .table-container { position: relative; }
+        thead { position: sticky; top: 0; z-index: 40; }
+        th { background-color: #f8fafc; border-bottom: 2px solid #94a3b8; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         
+        .zebra-row:nth-child(even) td { background-color: #f8fafc; }
+        .zebra-row:nth-child(odd) td { background-color: #ffffff; }
+        .zebra-row:hover td { background-color: #f1f5f9 !important; }
+        .zebra-row.row-locked td { background-color: #fae8ff !important; border-top: 1px solid rgba(192, 38, 211, 0.3); border-bottom: 1px solid rgba(192, 38, 211, 0.3); }
+        td.dark-cell { background-color: #1e293b !important; color: #ffffff !important; }
+        .zebra-row:hover td.dark-cell { background-color: #f1f5f9 !important; color: #0f172a !important; font-weight: 800; }
+        .zebra-row.row-locked td.dark-cell { background-color: #fae8ff !important; color: #0f172a !important; font-weight: 800; }
+        
+        .brief-row td.cell-main { background-color: #eff6ff !important; } 
+        .brief-row td.cell-sub { background-color: #ffffff !important; }
+        .brief-row:hover td.cell-main, .brief-row:hover td.cell-sub { background-color: #e2e8f0 !important; }
+        .brief-row.row-locked td.cell-main, .brief-row.row-locked td.cell-sub { background-color: #fae8ff !important; border-top: 1px solid rgba(192, 38, 211, 0.3); border-bottom: 1px solid rgba(192, 38, 211, 0.3); }
+
+        #mainTableContainer th:first-child, #mainTableContainer td:first-child,
+        #briefTableContainer th:first-child, #briefTableContainer td:first-child { position: sticky !important; left: 0 !important; z-index: 30; border-right: 2px solid #94a3b8 !important; }
+        #mainTableContainer thead tr:first-child th:first-child,
+        #briefTableContainer thead tr:first-child th:first-child,
+        #briefTableContainer thead tr:nth-child(2) th:first-child { z-index: 50 !important; background-color: #f8fafc !important; }
+
+        #mainTableContainer .zebra-row:nth-child(even) td:first-child { background-color: #f8fafc !important; }
+        #mainTableContainer .zebra-row:nth-child(odd) td:first-child { background-color: #ffffff !important; }
+        #mainTableContainer .zebra-row:hover td:first-child { background-color: #f1f5f9 !important; }
+        #mainTableContainer .zebra-row.row-locked td:first-child { background-color: #fae8ff !important; }
+        #briefTableContainer .brief-row td:first-child { background-color: #eff6ff !important; }
+        #briefTableContainer .brief-row:hover td:first-child { background-color: #e2e8f0 !important; }
+        #briefTableContainer .brief-row.row-locked td:first-child { background-color: #fae8ff !important; }
+
+        #dataTable tbody, #briefTable tbody { user-select: none; }
+        .cell-selected { background-color: rgba(192, 38, 211, 0.15) !important; box-shadow: inset 0 0 0 1px #c026d3; }
+        .col-hidden { display: none !important; }
+
+        /* === 翠绿/赤红 百分比数据条柱形图 === */
+        .data-bar-cell { position: relative; width: 100%; height: 100%; min-height: 28px; display: flex; align-items: center; justify-content: center; z-index: 1; border-radius: 6px; overflow: hidden; background-color: transparent; }
+        .data-bar-bg { position: absolute; left: 0; top: 0; bottom: 0; z-index: -1; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bar-green { background: linear-gradient(90deg, #10b981 0%, #059669 100%); }
+        .bar-red { background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); }
+        .data-bar-bg::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: shimmerBar 3.5s infinite ease-in-out; }
+        @keyframes shimmerBar { 0% { left: -100%; } 50% { left: 200%; } 100% { left: 200%; } }
+
+        /* === 筛选弹窗 === */
+        .filter-popup { position: absolute; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.15); border-radius: 12px; padding: 12px; z-index: 9999; width: 240px; max-height: 350px; display: flex; flex-direction: column; transform-origin: top right; animation: popDown 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes popDown { from { opacity: 0; transform: translateY(-10px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .filter-list::-webkit-scrollbar { width: 4px; }
+        .filter-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        /* 其他全局滚动条 */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -81,355 +121,413 @@
 </head>
 <body class="font-sans text-slate-800 antialiased h-screen flex flex-col overflow-hidden">
 
+    <!-- === 全局顶部导航 === -->
     <header class="hero-aurora text-white pt-6 pb-6 flex-shrink-0 z-20 shadow-lg">
-        <div class="max-w-[1400px] mx-auto px-6 flex items-center justify-between relative z-10">
+        <div class="max-w-[1800px] mx-auto px-6 flex flex-col md:flex-row items-center justify-between relative z-10 gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-inner">
                     <i class="ph-bold ph-chart-polar text-2xl text-white"></i>
                 </div>
                 <div>
-                    <div class="flex items-center gap-3">
-                        <h1 class="text-2xl font-black tracking-wide">WB DATA HUB</h1>
-                        <!-- 新增：智能日期范围展示胶囊 -->
-                        <span id="report-date-range" class="hidden text-xs bg-white/20 px-3 py-1 rounded-full border border-white/30 backdrop-blur-md font-bold tracking-normal flex items-center gap-1.5 shadow-sm">
-                            <i class="ph-bold ph-calendar-blank text-sm"></i> <span id="date-range-text"></span>
-                        </span>
-                    </div>
-                    <p class="text-white/80 text-xs uppercase tracking-widest font-bold mt-0.5">多维利润核算矩阵</p>
+                    <h1 class="text-2xl font-black tracking-wide">WB DATA HUB Ultimate</h1>
+                    <p class="text-white/80 text-xs uppercase tracking-widest font-bold mt-0.5">全域利润核算矩阵</p>
                 </div>
             </div>
-            <div class="flex bg-black/20 p-1.5 rounded-xl border border-white/10 backdrop-blur-md">
-                <button onclick="switchTab('dashboard')" id="btn-tab-dashboard" class="px-5 py-2 rounded-lg bg-white text-brand-700 font-extrabold shadow-md transition-all text-sm flex items-center gap-2">
-                    <i class="ph-bold ph-layout"></i> 数据看板
+            
+            <!-- 全局 Tabs -->
+            <div class="flex bg-black/20 p-1.5 rounded-xl border border-white/10 backdrop-blur-md gap-1 shadow-inner">
+                <button onclick="switchGlobalTab('import')" id="gtab-import" class="px-5 py-2 rounded-lg bg-white text-brand-700 font-extrabold shadow-md transition-all text-sm flex items-center gap-2">
+                    <i class="ph-bold ph-download-simple"></i> 数据导入
                 </button>
-                <button onclick="switchTab('costDB')" id="btn-tab-costDB" class="px-5 py-2 rounded-lg text-white/90 font-medium hover:bg-white/10 hover:text-white transition-all text-sm flex items-center gap-2">
-                    <i class="ph-bold ph-database"></i> 成本库设置
+                <button onclick="switchGlobalTab('dashboard')" id="gtab-dashboard" class="px-5 py-2 rounded-lg text-white/90 font-medium hover:bg-white/10 hover:text-white transition-all text-sm flex items-center gap-2">
+                    <i class="ph-bold ph-layout"></i> 店铺大盘
+                </button>
+                <button onclick="switchGlobalTab('sku')" id="gtab-sku" class="px-5 py-2 rounded-lg text-white/90 font-medium hover:bg-white/10 hover:text-white transition-all text-sm flex items-center gap-2">
+                    <i class="ph-bold ph-flask"></i> SKU 精算台
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 relative z-10">
-        <div class="max-w-[1400px] mx-auto">
+    <main class="flex-1 overflow-y-auto relative z-10 p-4 sm:p-6 lg:p-8">
+        
+        <!-- ========================================== -->
+        <!-- MODULE 1: 数据导入 (Data Import & Cost DB) -->
+        <!-- ========================================== -->
+        <div id="module-import" class="max-w-[1400px] mx-auto space-y-8 animate-fade-in-up block">
             
-            <!-- ============================== -->
-            <!-- TAB 1: 数据看板 (Dashboard)    -->
-            <!-- ============================== -->
-            <div id="tab-dashboard" class="space-y-6">
-                
-                <div id="missing-sku-alert" class="hidden glass-panel border-l-4 border-rose-500 p-4 rounded-xl shadow-glass mb-6">
-                    <div class="flex items-start">
-                        <div class="bg-rose-100 p-2 rounded-full mr-4"><i class="ph-bold ph-warning text-rose-600 text-xl"></i></div>
-                        <div>
-                            <h3 class="text-rose-800 font-extrabold text-lg">发现未知商品，成本默认记为 0，利润虚高！</h3>
-                            <p class="text-slate-600 text-sm mt-1 leading-relaxed">
-                                报表中包含本地未录入成本的 WB 编号：<span id="missing-sku-list" class="font-mono bg-rose-50 text-rose-600 px-2 py-0.5 rounded font-bold break-all border border-rose-100"></span>
-                                <br><span class="text-rose-500 text-xs mt-1.5 inline-block font-medium">💡 请前往右上角【成本库设置】补齐。补齐后本页面会自动刷新计算。</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-panel rounded-3xl shadow-glass p-2">
-                    <div class="border-2 border-dashed border-indigo-200 bg-indigo-50/30 hover:bg-white hover:border-indigo-400 rounded-2xl p-8 text-center transition-all duration-300 relative group cursor-pointer overflow-hidden">
-                        <input type="file" id="wbReportInput" accept=".xlsx, .xls, .csv" class="absolute inset-0 w-full h-full z-30" />
-                        <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-100 rounded-full blur-3xl opacity-50 group-hover:bg-indigo-200 transition-colors"></div>
-                        <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-pink-100 rounded-full blur-3xl opacity-50 group-hover:bg-pink-200 transition-colors"></div>
-
-                        <div id="uploadUI" class="pointer-events-none relative z-10">
-                            <div class="w-16 h-16 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-300">
-                                <i class="ph-duotone ph-file-xls text-4xl text-indigo-500"></i>
-                            </div>
-                            <h3 class="text-xl font-extrabold text-slate-800">拖拽 WB 财务报告 (.xlsx) 至此</h3>
-                            <p class="text-sm text-slate-500 mt-2 font-medium">引擎将瞬间吞吐数据，凌空核算利润与时间跨度</p>
-                        </div>
-                        <div id="loading" class="hidden flex-col items-center justify-center pointer-events-none py-6 relative z-10">
-                            <div class="spinner mb-4"></div>
-                            <p class="text-brand-600 font-extrabold text-sm tracking-widest uppercase">正在执行量子计算...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="results" class="hidden space-y-6 animate-fade-in-up">
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- 最终净利润 -->
-                        <div id="profit-card-container" class="profit-card rounded-3xl p-8 text-white relative overflow-hidden flex flex-col justify-between modern-hover lg:col-span-1">
-                            <i class="ph-duotone ph-coins absolute -right-6 -bottom-6 text-[140px] opacity-10"></i>
+            <!-- 顶层四个核心报表上传 -->
+            <div class="glass-panel p-6 rounded-3xl shadow-glass border border-white">
+                <h2 class="text-lg font-black text-slate-800 mb-4 flex items-center gap-2"><i class="ph-fill ph-files text-brand-500"></i> 核心数据源加载坞</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border-2 border-brand-300 hover:border-brand-500 transition-colors relative overflow-hidden group cursor-pointer">
+                        <input type="file" id="upload-financial" accept=".xlsx" class="absolute inset-0 w-full h-full z-30 hidden-upload" />
+                        <div class="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:scale-110 group-hover:opacity-[0.08] transition-all pointer-events-none"><i class="ph-fill ph-file-xls text-[80px] text-brand-600"></i></div>
+                        <div class="flex items-center gap-4 relative z-10">
+                            <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center border border-brand-100 flex-shrink-0"><i class="ph-bold ph-wallet text-2xl"></i></div>
                             <div>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <div class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse border border-white/50"></div>
-                                    <p class="text-white/90 font-bold text-sm tracking-wider">最终净利润 (₽)</p>
-                                </div>
-                                <div class="text-5xl font-black tracking-tight" id="val_net_profit">0.00</div>
-                            </div>
-                            <div class="mt-6 pt-5 border-t border-white/20 relative z-10">
-                                <p class="text-white/80 text-xs font-semibold tracking-wide">扣除平台和成本后</p>
-                            </div>
-                        </div>
-
-                        <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4 xl:gap-6">
-                            <!-- 实际收入 -->
-                            <div class="glass-panel rounded-3xl p-6 modern-hover relative overflow-hidden flex flex-col justify-between">
-                                <div class="absolute top-0 right-0 w-24 h-24 bg-blue-100 rounded-full blur-3xl -mr-8 -mt-8 opacity-60"></div>
-                                <div class="relative z-10">
-                                    <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 border border-blue-100 shadow-sm">
-                                        <i class="ph-bold ph-wallet text-xl"></i>
-                                    </div>
-                                    <p class="text-slate-500 font-extrabold text-[13px] tracking-wider mb-1">平台实际回款</p>
-                                    <div class="text-3xl font-extrabold text-slate-800"><span id="val_shouru">0.00</span> <span class="text-base text-slate-400 font-bold ml-1">₽</span></div>
-                                </div>
-                                <p class="relative z-10 text-slate-400 text-[11px] mt-4 font-bold">等于: 签收金额 - 退货金额</p>
-                            </div>
-                            
-                            <!-- WB销售总额 (SPP) -->
-                            <div class="glass-panel rounded-3xl p-6 modern-hover relative overflow-hidden flex flex-col justify-between border-t-4 sm:border-t-0 sm:border-l-4 border-purple-400">
-                                <div class="absolute top-0 right-0 w-24 h-24 bg-purple-100 rounded-full blur-3xl -mr-8 -mt-8 opacity-60"></div>
-                                <div class="relative z-10">
-                                    <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3 border border-purple-100 shadow-sm">
-                                        <i class="ph-bold ph-storefront text-xl"></i>
-                                    </div>
-                                    <p class="text-slate-500 font-extrabold text-[13px] tracking-wider mb-1">WB销售总额(SPP)</p>
-                                    <div class="text-3xl font-extrabold text-slate-800"><span id="val_wb_xiaoshou">0.00</span> <span class="text-base text-slate-400 font-bold ml-1">₽</span></div>
-                                </div>
-                                <p class="relative z-10 text-slate-400 text-[11px] mt-4 font-bold">包含SPP的签收GMV</p>
-                            </div>
-
-                            <!-- 匹配发货总成本 -->
-                            <div class="glass-panel rounded-3xl p-6 modern-hover relative overflow-hidden flex flex-col justify-between border-t-4 sm:border-t-0 sm:border-l-4 border-orange-400">
-                                <div class="absolute top-0 right-0 w-24 h-24 bg-orange-100 rounded-full blur-3xl -mr-8 -mt-8 opacity-60"></div>
-                                <div class="relative z-10">
-                                    <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-3 border border-orange-100 shadow-sm relative">
-                                        <i class="ph-bold ph-package text-xl"></i>
-                                        <div id="cogs-warning-dot" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></div>
-                                    </div>
-                                    <p class="text-slate-500 font-extrabold text-[13px] tracking-wider mb-1">匹配发货总成本</p>
-                                    <div class="text-3xl font-extrabold text-slate-800"><span id="val_cogs">0.00</span> <span class="text-base text-slate-400 font-bold ml-1">₽</span></div>
-                                </div>
-                                <p class="relative z-10 text-slate-400 text-[11px] mt-4 font-bold">依据本地数据库实时换算</p>
+                                <p class="text-xs font-extrabold text-brand-500 uppercase">大盘/精算 必填</p>
+                                <p class="font-bold text-slate-800 text-[13px]">WB 财务报告</p>
+                                <p id="status-financial" class="text-[10px] text-slate-400 font-bold mt-0.5 flex items-center gap-1">待加载</p>
                             </div>
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
-                        
-                        <!-- 左侧：全景饼图 -->
-                        <div class="xl:col-span-5 glass-panel rounded-3xl p-6 shadow-glass flex flex-col">
-                            <div class="flex items-center justify-between mb-6">
-                                <h2 class="text-lg font-black text-slate-800">收入去向全景分析</h2>
-                                <div class="p-2 bg-slate-100 rounded-xl text-slate-500"><i class="ph-bold ph-pie-chart text-xl"></i></div>
-                            </div>
-                            <div class="relative w-full flex-1 flex items-center justify-center min-h-[350px]">
-                                <canvas id="expenseChart"></canvas>
-                            </div>
-                            <p class="text-center text-xs text-slate-400 font-bold mt-4">展示 利润、成本 与 平台费用的真实占比</p>
-                        </div>
-
-                        <!-- 右侧：明细网格 -->
-                        <div class="xl:col-span-7 glass-panel rounded-3xl p-6 shadow-glass flex flex-col">
-                            <h2 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-2">
-                                WB 扣除和补偿板块明细
-                            </h2>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1">
-                                
-                                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-brand-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-bold ph-receipt text-[60px] text-brand-600"></i>
-                                    </div>
-                                    <div class="flex justify-between items-start mb-3 relative z-10">
-                                        <p class="text-slate-500 font-extrabold text-xs uppercase">佣金</p>
-                                        <span class="text-[10px] font-bold text-brand-700 bg-brand-50 px-1.5 py-0.5 rounded border border-brand-100"><span id="pct_yongjin">0.0</span>%</span>
-                                    </div>
-                                    <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_yongjin">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
-                                </div>
-
-                                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-fill ph-truck text-[60px] text-blue-600"></i>
-                                    </div>
-                                    <div class="flex justify-between items-start mb-3 relative z-10">
-                                        <p class="text-slate-500 font-extrabold text-xs uppercase">物流费</p>
-                                        <span class="text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100"><span id="pct_wuliu">0.0</span>%</span>
-                                    </div>
-                                    <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_wuliu">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
-                                </div>
-
-                                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-purple-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-fill ph-warehouse text-[60px] text-purple-600"></i>
-                                    </div>
-                                    <div class="flex justify-between items-start mb-3 relative z-10">
-                                        <p class="text-slate-500 font-extrabold text-xs uppercase">仓储费</p>
-                                        <span class="text-[10px] font-bold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-100"><span id="pct_cangchu">0.0</span>%</span>
-                                    </div>
-                                    <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_cangchu">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
-                                </div>
-
-                                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-orange-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-fill ph-bank text-[60px] text-orange-600"></i>
-                                    </div>
-                                    <div class="flex justify-between items-start mb-3 relative z-10">
-                                        <p class="text-slate-500 font-extrabold text-xs uppercase">银行收单</p>
-                                        <span class="text-[10px] font-bold text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-100"><span id="pct_yinxing">0.0</span>%</span>
-                                    </div>
-                                    <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_yinxing">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
-                                </div>
-
-                                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-fill ph-megaphone text-[60px] text-slate-600"></i>
-                                    </div>
-                                    <div class="flex justify-between items-start mb-3 relative z-10">
-                                        <p class="text-slate-500 font-extrabold text-xs uppercase">其它/推广</p>
-                                        <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200"><span id="pct_qita">0.0</span>%</span>
-                                    </div>
-                                    <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_qita">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
-                                </div>
-
-                                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-300 transition-all group relative overflow-hidden flex flex-col justify-between">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.04] group-hover:scale-110 group-hover:opacity-[0.12] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-fill ph-check-square-offset text-[60px] text-teal-600"></i>
-                                    </div>
-                                    <div class="flex justify-between items-start mb-3 relative z-10">
-                                        <p class="text-slate-500 font-extrabold text-xs uppercase">验收</p>
-                                        <span class="text-[10px] font-bold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-100"><span id="pct_yanshou">0.0</span>%</span>
-                                    </div>
-                                    <p class="font-black text-2xl text-slate-800 tracking-tight relative z-10"><span id="val_yanshou">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
-                                </div>
-
-                                <div class="bg-rose-50/70 p-5 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden group">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.06] group-hover:scale-110 group-hover:opacity-[0.15] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-fill ph-warning-octagon text-[60px] text-rose-600"></i>
-                                    </div>
-                                    <p class="text-rose-600 font-black text-xs mb-3 relative z-10">罚款</p>
-                                    <p class="font-black text-2xl text-rose-700 tracking-tight relative z-10"><span id="val_fakuan">0.00</span> <span class="text-sm font-bold text-rose-400">₽</span></p>
-                                </div>
-                                <div class="bg-amber-50/70 p-5 rounded-2xl border border-amber-100 shadow-sm relative overflow-hidden group">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.06] group-hover:scale-110 group-hover:opacity-[0.15] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-fill ph-plus-circle text-[60px] text-amber-600"></i>
-                                    </div>
-                                    <p class="text-amber-600 font-black text-xs mb-3 relative z-10">额外付款</p>
-                                    <p class="font-black text-2xl text-amber-700 tracking-tight relative z-10"><span id="val_ewai">0.00</span> <span class="text-sm font-bold text-amber-400">₽</span></p>
-                                </div>
-
-                                <div class="bg-emerald-50/40 p-5 rounded-2xl border border-emerald-100 shadow-sm col-span-1 sm:col-span-1 flex flex-col justify-center relative overflow-hidden group">
-                                    <div class="absolute -right-2 -bottom-2 opacity-[0.06] group-hover:scale-110 group-hover:opacity-[0.15] transition-all duration-300 pointer-events-none">
-                                        <i class="ph-fill ph-money text-[60px] text-emerald-600"></i>
-                                    </div>
-                                    <p class="text-emerald-700 font-extrabold text-xs mb-3 uppercase relative z-10">平台补偿</p>
-                                    <div class="text-xs text-emerald-800 font-bold flex justify-between relative z-10">缺陷: <span>+<span id="val_quexian">0.00</span> ₽</span></div>
-                                    <div class="text-xs text-emerald-800 font-bold mt-2 flex justify-between relative z-10">损害: <span>+<span id="val_sunhai">0.00</span> ₽</span></div>
-                                </div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 hover:border-blue-300 transition-colors relative overflow-hidden group cursor-pointer">
+                        <input type="file" id="upload-inventory" accept=".xlsx" class="absolute inset-0 w-full h-full z-30 hidden-upload" />
+                        <div class="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:scale-110 group-hover:opacity-[0.08] transition-all pointer-events-none"><i class="ph-fill ph-warehouse text-[80px] text-blue-600"></i></div>
+                        <div class="flex items-center gap-4 relative z-10">
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 flex-shrink-0"><i class="ph-bold ph-package text-2xl"></i></div>
+                            <div>
+                                <p class="text-xs font-extrabold text-slate-400 uppercase">精算选填</p>
+                                <p class="font-bold text-slate-800 text-[13px]">官方仓库存报告</p>
+                                <p id="status-inventory" class="text-[10px] text-slate-400 font-bold mt-0.5 flex items-center gap-1">待加载</p>
                             </div>
                         </div>
                     </div>
-
-                    <!-- 基础业务转化指标 -->
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                        
-                        <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-brand-300 transition-colors relative overflow-hidden group">
-                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-110 group-hover:opacity-[0.1] transition-transform pointer-events-none"><i class="ph-fill ph-package text-[70px]"></i></div>
-                            <p class="text-xs font-black text-slate-400 mb-2 uppercase relative z-10">签收明细</p>
-                            <p class="font-black text-2xl text-slate-800 relative z-10"><span id="val_qianshou">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
-                            <p class="text-sm font-bold text-emerald-600 mt-1 relative z-10"><span id="val_qianshou_jian">0</span> <span class="text-xs">件</span></p>
-                        </div>
-
-                        <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-rose-300 transition-colors relative overflow-hidden group">
-                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-110 group-hover:opacity-[0.1] transition-transform pointer-events-none"><i class="ph-fill ph-arrow-u-down-left text-[70px]"></i></div>
-                            <p class="text-xs font-black text-slate-400 mb-2 uppercase relative z-10">退货占压</p>
-                            <p class="font-black text-2xl text-rose-600 relative z-10"><span id="val_tuihuo">0.00</span> <span class="text-sm font-bold text-rose-400">₽</span></p>
-                            <p class="text-sm font-bold text-rose-500 mt-1 relative z-10"><span id="val_tuihuo_jian">0</span> <span class="text-xs">件</span></p>
-                        </div>
-
-                        <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-brand-300 transition-colors relative overflow-hidden group">
-                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-110 group-hover:opacity-[0.1] transition-transform pointer-events-none"><i class="ph-fill ph-tag text-[70px]"></i></div>
-                            <p class="text-xs font-black text-slate-400 mb-2 uppercase relative z-10">平均客单价</p>
-                            <p class="font-black text-2xl text-slate-800 mt-3 relative z-10"><span id="val_pingjun_shoujia">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
-                        </div>
-
-                        <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-brand-300 transition-colors flex flex-col justify-between group relative overflow-hidden">
-                            <div class="absolute -right-2 -bottom-2 opacity-[0.05] group-hover:scale-110 group-hover:opacity-[0.1] transition-transform pointer-events-none"><i class="ph-fill ph-percent text-[70px]"></i></div>
-                            <div class="relative z-10">
-                                <p class="text-xs font-black text-slate-400 mb-1 uppercase">平均WB折扣</p>
-                                <p class="font-black text-2xl text-brand-600 mt-1"><span id="val_pingtai_zhekou">0.00</span> <span class="text-sm font-bold text-brand-400">%</span></p>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-slate-100/80 relative z-10">
-                                <p class="text-xs font-black text-slate-400 mb-1 uppercase">实际交货总量</p>
-                                <p class="font-black text-xl text-slate-800"><span id="val_jiaohuo_shuliang">0</span> <span class="text-xs font-bold text-slate-400">件</span></p>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 hover:border-purple-300 transition-colors relative overflow-hidden group cursor-pointer">
+                        <input type="file" id="upload-storage" accept=".xlsx" class="absolute inset-0 w-full h-full z-30 hidden-upload" />
+                        <div class="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:scale-110 group-hover:opacity-[0.08] transition-all pointer-events-none"><i class="ph-fill ph-database text-[80px] text-purple-600"></i></div>
+                        <div class="flex items-center gap-4 relative z-10">
+                            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100 flex-shrink-0"><i class="ph-bold ph-stack text-2xl"></i></div>
+                            <div>
+                                <p class="text-xs font-extrabold text-slate-400 uppercase">精算选填</p>
+                                <p class="font-bold text-slate-800 text-[13px]">存储费明细报告</p>
+                                <p id="status-storage" class="text-[10px] text-slate-400 font-bold mt-0.5 flex items-center gap-1">待加载</p>
                             </div>
                         </div>
-
-                        <div class="p-5 rounded-2xl shadow-sm border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 transition-colors relative overflow-hidden flex flex-col justify-center group">
-                            <div class="absolute right-0 top-1/2 transform -translate-y-1/2 opacity-[0.08] group-hover:scale-110 group-hover:opacity-[0.15] transition-all duration-300 pointer-events-none"><i class="ph-fill ph-chart-line-up text-[90px] -mr-4"></i></div>
-                            <p class="text-xs font-black text-emerald-700 mb-2 uppercase relative z-10">订单签收率</p>
-                            <p class="font-black text-4xl text-emerald-600 mt-1 tracking-tight relative z-10"><span id="val_qianshou_lv">0.00</span><span class="text-2xl font-bold text-emerald-500">%</span></p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 hover:border-orange-300 transition-colors relative overflow-hidden group cursor-pointer">
+                        <input type="file" id="upload-ads" accept=".xlsx" class="absolute inset-0 w-full h-full z-30 hidden-upload" />
+                        <div class="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:scale-110 group-hover:opacity-[0.08] transition-all pointer-events-none"><i class="ph-fill ph-megaphone text-[80px] text-orange-600"></i></div>
+                        <div class="flex items-center gap-4 relative z-10">
+                            <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center border border-orange-100 flex-shrink-0"><i class="ph-bold ph-speaker-hifi text-2xl"></i></div>
+                            <div>
+                                <p class="text-xs font-extrabold text-slate-400 uppercase">精算选填</p>
+                                <p class="font-bold text-slate-800 text-[13px]">广告明细报告</p>
+                                <p id="status-ads" class="text-[10px] text-slate-400 font-bold mt-0.5 flex items-center gap-1">待加载</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ============================== -->
-            <!-- TAB 2: 成本配置中心 (Cost DB)  -->
-            <!-- ============================== -->
-            <div id="tab-costDB" class="hidden space-y-6 animate-fade-in-up">
-                <div class="glass-panel rounded-3xl shadow-glass p-8 border border-white">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 border-b border-slate-200 pb-6">
-                        <div>
-                            <h2 class="text-2xl font-black text-slate-800 flex items-center gap-3">
-                                <div class="p-2 bg-indigo-50 text-indigo-600 rounded-xl"><i class="ph-bold ph-database"></i></div>
-                                商品成本哈希映射库
-                            </h2>
-                            <p class="text-sm text-slate-500 mt-2 font-medium">配置后永久储存于本地浏览器。汇率不填默认按 <span class="text-brand-600 font-bold bg-brand-50 px-1.5 rounded">12</span> 计算。</p>
+            <!-- 本地成本库管理 (原大盘配置) -->
+            <div class="glass-panel rounded-3xl shadow-glass p-6 md:p-8 border border-white">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-slate-200 pb-4">
+                    <div>
+                        <h2 class="text-xl font-black text-slate-800 flex items-center gap-3">
+                            <div class="p-2 bg-indigo-50 text-indigo-600 rounded-xl"><i class="ph-bold ph-database"></i></div>
+                            商品成本哈希映射库
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-2 font-medium">配置后永久储存于本地浏览器。汇率不填默认按 <span class="text-brand-600 font-bold bg-brand-50 px-1.5 rounded">12</span> 计算。</p>
+                    </div>
+                    <button onclick="clearAllCosts()" class="px-4 py-2 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl text-sm font-bold hover:bg-rose-500 hover:text-white transition-all shadow-sm flex items-center gap-2">
+                        <i class="ph-bold ph-trash"></i> 清空数据库
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-indigo-200 transition-all">
+                        <p class="text-sm font-extrabold text-slate-800 mb-3 flex items-center gap-2"><i class="ph-fill ph-file-xls text-green-500 text-lg"></i> Excel 批量覆盖 / 导入</p>
+                        <div class="relative w-full h-14 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:border-indigo-400 transition-all cursor-pointer flex items-center justify-center text-sm font-bold text-slate-600 group">
+                            <input type="file" id="batchCostInput" accept=".xlsx, .xls, .csv" class="absolute inset-0 w-full h-full z-30 hidden-upload" />
+                            <i class="ph-bold ph-upload-simple text-indigo-500 mr-2 text-xl group-hover:-translate-y-1 transition-transform"></i> 
+                            拖入表格 (A列:WB编号, B列:RMB成本, C列:汇率)
                         </div>
-                        <button onclick="clearAllCosts()" class="px-5 py-2.5 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl text-sm font-bold hover:bg-rose-500 hover:text-white transition-all shadow-sm flex items-center gap-2">
-                            <i class="ph-bold ph-trash"></i> 一键清空数据库
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-200 transition-all">
+                        <p class="text-sm font-extrabold text-slate-800 mb-3 flex items-center gap-2"><i class="ph-fill ph-keyboard text-blue-500 text-lg"></i> 单条即时录入 / 修改</p>
+                        <div class="flex flex-wrap sm:flex-nowrap gap-2">
+                            <input type="text" id="add_id" placeholder="WB 编号" class="flex-1 min-w-[100px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                            <input type="number" id="add_cost" placeholder="RMB 成本" class="w-full sm:w-24 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                            <input type="number" id="add_rate" placeholder="汇率(空=12)" class="w-full sm:w-24 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500/50">
+                            <button onclick="addSingleCost()" class="w-full sm:w-auto px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-bold hover:bg-brand-600 transition-colors shadow-md">保存</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <div class="max-h-[350px] overflow-y-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-slate-50/80 backdrop-blur-md sticky top-0 z-10">
+                                <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
+                                    <th class="p-3 font-bold">WB 编号 (匹配键)</th>
+                                    <th class="p-3 font-bold">采购成本 (RMB)</th>
+                                    <th class="p-3 font-bold">运算汇率</th>
+                                    <th class="p-3 font-bold text-brand-600">系统换算成本 (₽)</th>
+                                    <th class="p-3 font-bold text-center w-20">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cost-table-body" class="text-sm divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- MODULE 2: 店铺大盘 (WB DATA HUB Dashboard) -->
+        <!-- ========================================== -->
+        <div id="module-dashboard" class="max-w-[1400px] mx-auto space-y-6 hidden">
+            
+            <div id="missing-sku-alert" class="hidden glass-panel border-l-4 border-rose-500 p-4 rounded-xl shadow-glass mb-4">
+                <div class="flex items-start">
+                    <div class="bg-rose-100 p-2 rounded-full mr-4"><i class="ph-bold ph-warning text-rose-600 text-xl"></i></div>
+                    <div>
+                        <h3 class="text-rose-800 font-extrabold text-lg">发现未知商品，成本默认记为 0，利润虚高！</h3>
+                        <p class="text-slate-600 text-sm mt-1 leading-relaxed">
+                            报表中包含本地未录入成本的 WB 编号：<span id="missing-sku-list" class="font-mono bg-rose-50 text-rose-600 px-2 py-0.5 rounded font-bold break-all border border-rose-100"></span>
+                            <br><span class="text-rose-500 text-xs mt-1.5 inline-block font-medium">💡 请前往【数据导入】补齐。补齐后大盘会自动刷新。</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dashboard-results" class="hidden space-y-6 animate-fade-in-up">
+                <div class="flex items-center gap-3">
+                    <span id="report-date-range" class="hidden text-xs bg-slate-800 text-white px-3 py-1.5 rounded-full shadow-sm font-bold tracking-normal flex items-center gap-1.5">
+                        <i class="ph-bold ph-calendar-blank text-sm"></i> 财报账期：<span id="date-range-text"></span>
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- 最终净利润 -->
+                    <div id="profit-card-container" class="profit-card rounded-3xl p-8 text-white relative overflow-hidden flex flex-col justify-between modern-hover lg:col-span-1">
+                        <i class="ph-duotone ph-coins absolute -right-6 -bottom-6 text-[140px] opacity-10"></i>
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse border border-white/50"></div>
+                                <p class="text-white/90 font-bold text-sm tracking-wider">最终净利润 (₽)</p>
+                            </div>
+                            <div class="text-5xl font-black tracking-tight" id="val_net_profit">0.00</div>
+                        </div>
+                        <div class="mt-6 pt-5 border-t border-white/20 relative z-10">
+                            <p class="text-white/80 text-xs font-semibold tracking-wide">扣除平台和成本后 (未扣除税费)</p>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4 xl:gap-6">
+                        <div class="glass-panel rounded-3xl p-6 modern-hover relative overflow-hidden flex flex-col justify-between">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-blue-100 rounded-full blur-3xl -mr-8 -mt-8 opacity-60"></div>
+                            <div class="relative z-10">
+                                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 border border-blue-100 shadow-sm"><i class="ph-bold ph-wallet text-xl"></i></div>
+                                <p class="text-slate-500 font-extrabold text-[13px] tracking-wider mb-1">平台实际回款</p>
+                                <div class="text-3xl font-extrabold text-slate-800"><span id="val_shouru">0.00</span> <span class="text-base text-slate-400 font-bold ml-1">₽</span></div>
+                            </div>
+                            <p class="relative z-10 text-slate-400 text-[11px] mt-4 font-bold">等于: 签收金额 - 退货金额</p>
+                        </div>
+                        
+                        <div class="glass-panel rounded-3xl p-6 modern-hover relative overflow-hidden flex flex-col justify-between border-t-4 sm:border-t-0 sm:border-l-4 border-purple-400">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-purple-100 rounded-full blur-3xl -mr-8 -mt-8 opacity-60"></div>
+                            <div class="relative z-10">
+                                <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3 border border-purple-100 shadow-sm"><i class="ph-bold ph-storefront text-xl"></i></div>
+                                <p class="text-slate-500 font-extrabold text-[13px] tracking-wider mb-1">WB销售总额(SPP)</p>
+                                <div class="text-3xl font-extrabold text-slate-800"><span id="val_wb_xiaoshou">0.00</span> <span class="text-base text-slate-400 font-bold ml-1">₽</span></div>
+                            </div>
+                            <p class="relative z-10 text-slate-400 text-[11px] mt-4 font-bold">包含SPP的签收GMV</p>
+                        </div>
+
+                        <div class="glass-panel rounded-3xl p-6 modern-hover relative overflow-hidden flex flex-col justify-between border-t-4 sm:border-t-0 sm:border-l-4 border-orange-400">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-orange-100 rounded-full blur-3xl -mr-8 -mt-8 opacity-60"></div>
+                            <div class="relative z-10">
+                                <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-3 border border-orange-100 shadow-sm relative">
+                                    <i class="ph-bold ph-package text-xl"></i>
+                                    <div id="cogs-warning-dot" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></div>
+                                </div>
+                                <p class="text-slate-500 font-extrabold text-[13px] tracking-wider mb-1">匹配发货总成本</p>
+                                <div class="text-3xl font-extrabold text-slate-800"><span id="val_cogs">0.00</span> <span class="text-base text-slate-400 font-bold ml-1">₽</span></div>
+                            </div>
+                            <p class="relative z-10 text-slate-400 text-[11px] mt-4 font-bold">依据本地数据库实时换算</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                    <!-- 饼图 -->
+                    <div class="xl:col-span-5 glass-panel rounded-3xl p-6 shadow-glass flex flex-col">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-lg font-black text-slate-800">收入去向全景分析</h2>
+                            <div class="p-2 bg-slate-100 rounded-xl text-slate-500"><i class="ph-bold ph-pie-chart text-xl"></i></div>
+                        </div>
+                        <div class="relative w-full flex-1 flex items-center justify-center min-h-[350px]">
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 明细网格 -->
+                    <div class="xl:col-span-7 glass-panel rounded-3xl p-6 shadow-glass flex flex-col">
+                        <h2 class="text-lg font-black text-slate-800 mb-6">WB 扣除和补偿明细</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1">
+                            <!-- 佣金 -->
+                            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                                <div class="flex justify-between items-start mb-3">
+                                    <p class="text-slate-500 font-extrabold text-xs uppercase">佣金</p>
+                                    <span class="text-[10px] font-bold text-brand-700 bg-brand-50 px-1.5 py-0.5 rounded border border-brand-100"><span id="pct_yongjin">0.0</span>%</span>
+                                </div>
+                                <p class="font-black text-2xl text-slate-800 tracking-tight"><span id="val_yongjin">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
+                            </div>
+                            <!-- 物流 -->
+                            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                                <div class="flex justify-between items-start mb-3">
+                                    <p class="text-slate-500 font-extrabold text-xs uppercase">物流费</p>
+                                    <span class="text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100"><span id="pct_wuliu">0.0</span>%</span>
+                                </div>
+                                <p class="font-black text-2xl text-slate-800 tracking-tight"><span id="val_wuliu">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
+                            </div>
+                            <!-- 仓储 -->
+                            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                                <div class="flex justify-between items-start mb-3">
+                                    <p class="text-slate-500 font-extrabold text-xs uppercase">仓储费</p>
+                                    <span class="text-[10px] font-bold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-100"><span id="pct_cangchu">0.0</span>%</span>
+                                </div>
+                                <p class="font-black text-2xl text-slate-800 tracking-tight"><span id="val_cangchu">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
+                            </div>
+                            <!-- 银行 -->
+                            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                                <div class="flex justify-between items-start mb-3">
+                                    <p class="text-slate-500 font-extrabold text-xs uppercase">银行收单</p>
+                                    <span class="text-[10px] font-bold text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-100"><span id="pct_yinxing">0.0</span>%</span>
+                                </div>
+                                <p class="font-black text-2xl text-slate-800 tracking-tight"><span id="val_yinxing">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
+                            </div>
+                            <!-- 其它 -->
+                            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                                <div class="flex justify-between items-start mb-3">
+                                    <p class="text-slate-500 font-extrabold text-xs uppercase">其它/推广</p>
+                                    <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200"><span id="pct_qita">0.0</span>%</span>
+                                </div>
+                                <p class="font-black text-2xl text-slate-800 tracking-tight"><span id="val_qita">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
+                            </div>
+                            <!-- 验收 -->
+                            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                                <div class="flex justify-between items-start mb-3">
+                                    <p class="text-slate-500 font-extrabold text-xs uppercase">验收</p>
+                                    <span class="text-[10px] font-bold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-100"><span id="pct_yanshou">0.0</span>%</span>
+                                </div>
+                                <p class="font-black text-2xl text-slate-800 tracking-tight"><span id="val_yanshou">0.00</span> <span class="text-sm font-bold text-slate-400">₽</span></p>
+                            </div>
+                            <!-- 罚款/额外付款 -->
+                            <div class="bg-rose-50/70 p-5 rounded-2xl border border-rose-100 shadow-sm">
+                                <p class="text-rose-600 font-black text-xs mb-3">罚款</p>
+                                <p class="font-black text-2xl text-rose-700 tracking-tight"><span id="val_fakuan">0.00</span> <span class="text-sm font-bold text-rose-400">₽</span></p>
+                            </div>
+                            <div class="bg-amber-50/70 p-5 rounded-2xl border border-amber-100 shadow-sm">
+                                <p class="text-amber-600 font-black text-xs mb-3">额外付款</p>
+                                <p class="font-black text-2xl text-amber-700 tracking-tight"><span id="val_ewai">0.00</span> <span class="text-sm font-bold text-amber-400">₽</span></p>
+                            </div>
+                            <!-- 平台补偿 -->
+                            <div class="bg-emerald-50/40 p-5 rounded-2xl border border-emerald-100 shadow-sm flex flex-col justify-center">
+                                <p class="text-emerald-700 font-extrabold text-xs mb-3 uppercase">平台补偿</p>
+                                <div class="text-xs text-emerald-800 font-bold flex justify-between">缺陷: <span>+<span id="val_quexian">0.00</span> ₽</span></div>
+                                <div class="text-xs text-emerald-800 font-bold mt-2 flex justify-between">损害: <span>+<span id="val_sunhai">0.00</span> ₽</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100"><p class="text-xs font-black text-slate-400 mb-2 uppercase">签收明细</p><p class="font-black text-2xl text-slate-800"><span id="val_qianshou">0.00</span> <span class="text-sm">₽</span></p><p class="text-sm font-bold text-emerald-600 mt-1"><span id="val_qianshou_jian">0</span> 件</p></div>
+                    <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100"><p class="text-xs font-black text-slate-400 mb-2 uppercase">退货占压</p><p class="font-black text-2xl text-rose-600"><span id="val_tuihuo">0.00</span> <span class="text-sm">₽</span></p><p class="text-sm font-bold text-rose-500 mt-1"><span id="val_tuihuo_jian">0</span> 件</p></div>
+                    <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100"><p class="text-xs font-black text-slate-400 mb-2 uppercase">平均客单价</p><p class="font-black text-2xl text-slate-800 mt-3"><span id="val_pingjun_shoujia">0.00</span> <span class="text-sm">₽</span></p></div>
+                    <div class="glass-panel p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between"><div><p class="text-xs font-black text-slate-400 mb-1 uppercase">平均WB折扣</p><p class="font-black text-2xl text-brand-600 mt-1"><span id="val_pingtai_zhekou">0.00</span> %</p></div><div class="mt-4 pt-4 border-t border-slate-100/80"><p class="text-xs font-black text-slate-400 mb-1 uppercase">实际交货</p><p class="font-black text-xl text-slate-800"><span id="val_jiaohuo_shuliang">0</span> 件</p></div></div>
+                    <div class="p-5 rounded-2xl shadow-sm border border-emerald-200 bg-emerald-50"><p class="text-xs font-black text-emerald-700 mb-2 uppercase">订单签收率</p><p class="font-black text-4xl text-emerald-600 mt-1 tracking-tight"><span id="val_qianshou_lv">0.00</span><span class="text-2xl">%</span></p></div>
+                </div>
+            </div>
+
+            <!-- Dashboard Placeholder -->
+            <div id="dashboard-empty" class="glass-panel p-16 rounded-3xl shadow-glass border border-white text-center flex flex-col items-center justify-center">
+                <i class="ph-duotone ph-chart-polar text-6xl text-slate-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-slate-600">大盘尚无数据</h3>
+                <p class="text-slate-400 mt-2 text-sm">请先前往「数据导入」加载 WB 财务报告</p>
+                <button onclick="switchGlobalTab('import')" class="mt-6 px-6 py-2 bg-brand-50 text-brand-600 rounded-lg font-bold border border-brand-200 hover:bg-brand-500 hover:text-white transition-colors">去导入数据</button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- MODULE 3: SKU 精算台 (SKU Micro Detail)    -->
+        <!-- ========================================== -->
+        <div id="module-sku" class="max-w-[1800px] mx-auto h-[calc(100vh-140px)] flex flex-col hidden animate-fade-in-up">
+            
+            <div class="glass-panel rounded-3xl shadow-glass border border-white flex-1 flex flex-col overflow-hidden relative">
+                
+                <!-- 精算台 Toolbar -->
+                <div class="px-4 sm:px-6 pt-4 border-b border-slate-200 bg-white/80 relative z-20 flex flex-wrap justify-between items-end gap-y-3">
+                    <div class="flex items-center gap-2">
+                        <button id="tab-main" class="px-5 py-3 rounded-t-xl font-black bg-brand-50 text-brand-700 border-b-2 border-brand-600 transition-colors flex items-center gap-2 text-sm">
+                            <i class="ph-bold ph-table"></i> 销售与库存明细
+                        </button>
+                        <button id="tab-brief" class="px-5 py-3 rounded-t-xl font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors flex items-center gap-2 text-sm">
+                            <i class="ph-bold ph-chart-line-up"></i> 产品签收简报
                         </button>
                     </div>
+                    
+                    <div class="flex items-center gap-4 pb-3 flex-wrap justify-end">
+                        <span class="text-sm font-bold text-brand-600 ml-2">展示行数: <span id="skuCount">0</span></span>
+                        
+                        <button onclick="clearAllFilters()" class="text-slate-400 hover:text-brand-600 font-bold text-sm transition-colors hidden" id="btnClearFilters"><i class="ph-bold ph-funnel-x"></i> 清除筛选</button>
+                        <span id="unallocated-total" class="hidden text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 shadow-inner">
+                            全局未分配杂费: <span class="text-slate-800" id="val_unallocated">0</span> ₽
+                        </span>
 
-                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-indigo-200 transition-all">
-                            <p class="text-sm font-extrabold text-slate-800 mb-4 flex items-center gap-2"><i class="ph-fill ph-file-xls text-green-500 text-lg"></i> Excel 批量覆盖 / 导入</p>
-                            <div class="relative w-full h-16 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:border-indigo-400 transition-all cursor-pointer flex items-center justify-center text-sm font-bold text-slate-600 group">
-                                <input type="file" id="batchCostInput" accept=".xlsx, .xls, .csv" class="absolute inset-0 w-full h-full z-30 cursor-pointer opacity-0" />
-                                <i class="ph-bold ph-upload-simple text-indigo-500 mr-2 text-xl group-hover:-translate-y-1 transition-transform"></i> 
-                                拖入表格 (A列:WB编号, B列:RMB成本, C列:汇率)
-                            </div>
+                        <div class="flex items-center bg-slate-800 p-1 rounded-lg shadow-sm border border-slate-700">
+                            <span class="text-white/80 text-xs font-bold px-2 tracking-wide"><i class="ph-bold ph-bank"></i> 店铺税制:</span>
+                            <select id="tax-system" class="bg-slate-700 border border-slate-600 text-white text-xs rounded md:rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all font-bold cursor-pointer hover:bg-slate-600">
+                                <option value="tax6" class="bg-slate-800 text-white">简易税制: 销售税 6%</option>
+                                <option value="tax15" class="bg-slate-800 text-white">标准税制: 利润税 15%</option>
+                                <option value="tax6_vat5" class="bg-slate-800 text-white">销售税 6% + VAT 5%</option>
+                                <option value="tax15_vat5" class="bg-slate-800 text-white">利润税 15% + VAT 5%</option>
+                            </select>
                         </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-200 transition-all">
-                            <p class="text-sm font-extrabold text-slate-800 mb-4 flex items-center gap-2"><i class="ph-fill ph-keyboard text-blue-500 text-lg"></i> 单条即时录入 / 修改</p>
-                            <div class="flex flex-wrap sm:flex-nowrap gap-3">
-                                <input type="text" id="add_id" placeholder="WB 编号 (如 1234)" class="flex-1 min-w-[120px] px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
-                                <input type="number" id="add_cost" placeholder="RMB 成本" class="w-full sm:w-28 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
-                                <input type="number" id="add_rate" placeholder="汇率(空=12)" class="w-full sm:w-32 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
-                                <button onclick="addSingleCost()" class="w-full sm:w-auto px-6 py-3 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-brand-600 transition-colors shadow-md">保存</button>
-                            </div>
+                        
+                        <div class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm hidden">
+                            <span class="text-[11px] font-bold text-slate-500 px-3 bg-slate-50 border-r border-slate-200 py-1.5">全局默认汇率</span>
+                            <input type="number" id="global-rate" value="12" class="w-16 px-2 py-1 text-sm font-bold text-brand-600 focus:outline-none text-center">
                         </div>
-                    </div>
 
-                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                        <div class="max-h-[500px] overflow-y-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead class="bg-slate-50/80 backdrop-blur-md sticky top-0 z-10">
-                                    <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
-                                        <th class="p-4 font-bold">WB 编号 (匹配键)</th>
-                                        <th class="p-4 font-bold">采购成本 (RMB)</th>
-                                        <th class="p-4 font-bold">运算汇率</th>
-                                        <th class="p-4 font-bold text-brand-600">系统换算成本 (₽)</th>
-                                        <th class="p-4 font-bold text-center w-24">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cost-table-body" class="text-sm divide-y divide-slate-100">
-                                </tbody>
-                            </table>
-                        </div>
+                        <button onclick="processRealData()" class="px-6 py-2 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md hover:bg-brand-500 hover:shadow-lg transition-all flex items-center gap-2">
+                            <i class="ph-bold ph-rocket-launch"></i> 生成精算报表
+                        </button>
                     </div>
+                </div>
+
+                <div id="mainTableContainer" class="table-container overflow-auto flex-1 bg-white relative block">
+                    <table class="w-full text-left border-collapse whitespace-nowrap" id="dataTable">
+                        <thead id="tableHead"></thead>
+                        <tbody id="tableBody" class="text-sm">
+                            <tr>
+                                <td colspan="34" class="p-16 text-center text-slate-400 font-bold flex flex-col items-center justify-center">
+                                    <i class="ph-duotone ph-flask text-6xl text-slate-200 mb-4"></i>
+                                    <div>请先确保已导入数据，并点击右上角【生成精算报表】</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="briefTableContainer" class="table-container overflow-auto flex-1 bg-white relative hidden">
+                    <table class="w-full text-left border-collapse whitespace-nowrap" id="briefTable">
+                        <thead id="briefTableHead"></thead>
+                        <tbody id="briefTableBody" class="text-sm"></tbody>
+                    </table>
                 </div>
             </div>
 
+            <!-- SKU Summary Bar -->
+            <div id="summary-bar" class="fixed bottom-8 right-8 bg-slate-800/95 backdrop-blur-xl border border-slate-700 text-white px-5 py-3 rounded-2xl shadow-floating transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-6 pointer-events-none">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center"><i class="ph-bold ph-sigma text-lg"></i></div>
+                    <div><p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">求和 (SUM)</p><p class="font-mono font-bold text-sm" id="sum-val">0.00</p></div>
+                </div>
+                <div class="w-px h-8 bg-slate-600"></div>
+                <div><p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">平均 (AVG)</p><p class="font-mono font-bold text-sm" id="avg-val">0.00</p></div>
+                <div class="w-px h-8 bg-slate-600"></div>
+                <div><p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">计数</p><p class="font-mono font-bold text-sm text-brand-400"><span id="count-val">0</span> 个</p></div>
+            </div>
         </div>
+        
     </main>
 
+    <!-- Global Toast -->
     <div id="toast" class="fixed top-8 right-8 bg-slate-800/95 backdrop-blur border border-slate-700 text-white px-6 py-4 rounded-2xl shadow-2xl transform -translate-y-4 opacity-0 transition-all duration-300 z-50 flex items-center gap-3 font-medium pointer-events-none">
         <i class="ph-fill ph-check-circle text-emerald-400 text-xl"></i>
         <span id="toast-msg">通知信息</span>
@@ -438,28 +536,65 @@
     <script>
         Chart.register(ChartDataLabels);
 
+        // ==========================================
+        // 全局状态与内存池
+        // ==========================================
+        let rawData = { financial: null, inventory: null, storage: null, ads: null };
         let costDB = {}; 
         let expenseChartInstance = null;
-        let currentReportJSON = null; 
+
+        let skuDataList = [];       
+        let filteredDataList = [];  
+        let sortConfig = { key: null, direction: null }; 
+        let activeFilters = {}; 
+        
+        let briefDataList = [];
+        let filteredBriefList = [];
+        let briefSortConfig = { key: null, direction: null };
+        let briefActiveFilters = {};
+        
+        let lockedRows = new Set();
+        let activeTab = 'main';
 
         const SALE_STATUS = ["Продажа", "Сторно возвратов", "Корректная продажа", "коррекция продаж"];
         const RETURN_STATUS = ["Возврат", "Сторно продаж", "Корректный возврат"];
         const SELLER_RETURN_STATUS = "Возврат по инициативе продавца (К продавцу)";
 
+        // ==========================================
+        // 初始化与全局导航
+        // ==========================================
         window.onload = function() {
             loadCostDB();
             renderCostTable();
+            switchGlobalTab('import');
         };
 
-        function switchTab(tab) {
-            document.getElementById('tab-dashboard').style.display = tab === 'dashboard' ? 'block' : 'none';
-            document.getElementById('tab-costDB').style.display = tab === 'costDB' ? 'block' : 'none';
+        function switchGlobalTab(tabId) {
+            document.getElementById('module-import').style.display = 'none';
+            document.getElementById('module-dashboard').style.display = 'none';
+            document.getElementById('module-sku').style.display = 'none';
+            
+            document.getElementById('module-' + tabId).style.display = (tabId === 'sku' ? 'flex' : 'block');
             
             const activeClass = 'px-5 py-2 rounded-lg bg-white text-brand-700 font-extrabold shadow-md transition-all text-sm flex items-center gap-2';
             const inactiveClass = 'px-5 py-2 rounded-lg text-white/90 font-medium hover:bg-white/10 hover:text-white transition-all text-sm flex items-center gap-2';
             
-            document.getElementById('btn-tab-dashboard').className = tab === 'dashboard' ? activeClass : inactiveClass;
-            document.getElementById('btn-tab-costDB').className = tab === 'costDB' ? activeClass : inactiveClass;
+            ['import', 'dashboard', 'sku'].forEach(id => {
+                document.getElementById('gtab-' + id).className = inactiveClass;
+            });
+            document.getElementById('gtab-' + tabId).className = activeClass;
+
+            if (tabId === 'dashboard') {
+                if (rawData.financial) {
+                    document.getElementById('dashboard-empty').style.display = 'none';
+                    document.getElementById('dashboard-results').style.display = 'block';
+                    calculateAndRenderDashboard(rawData.financial, false);
+                } else {
+                    document.getElementById('dashboard-empty').style.display = 'flex';
+                    document.getElementById('dashboard-results').style.display = 'none';
+                    document.getElementById('missing-sku-alert').style.display = 'none';
+                }
+            }
         }
 
         function showToast(message) {
@@ -470,15 +605,16 @@
             setTimeout(() => { toast.style.transform = 'translateY(-10px)'; toast.style.opacity = '0'; }, 3000);
         }
 
+        // ==========================================
+        // 核心辅助工具
+        // ==========================================
         function parseWBNumber(val) {
             if (val === undefined || val === null || val === '') return 0;
             if (typeof val === 'number') return val;
             let s = String(val).replace(/\s/g, '').replace(',', '.');
-            let n = parseFloat(s);
-            return isNaN(n) ? 0 : n;
+            let n = parseFloat(s); return isNaN(n) ? 0 : n;
         }
         
-        // 核心：处理复杂与杂乱 WB 日期格式的解析引擎
         function parseWBDate(val) {
             if (!val) return null;
             if (typeof val === 'number') {
@@ -494,15 +630,15 @@
                 }
                 if (s.includes('-')) {
                     let p = s.split('-');
-                    if (p.length === 3) {
-                        if (p[0].length === 4) return new Date(p[0], p[1]-1, p[2]);
-                    }
+                    if (p.length === 3 && p[0].length === 4) return new Date(p[0], p[1]-1, p[2]);
                 }
                 let parsed = new Date(str);
                 if (!isNaN(parsed.getTime())) return parsed;
             }
             return null;
         }
+
+        function cleanStr(val) { return val ? String(val).trim() : ""; }
 
         function animateValue(id, start, end, duration, isCurrency = false) {
             const obj = document.getElementById(id);
@@ -514,26 +650,31 @@
                 const easeOut = 1 - Math.pow(1 - progress, 4);
                 const currentVal = easeOut * (end - start) + start;
                 
-                if (isCurrency) {
-                    obj.innerText = currentVal.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                } else {
-                    const decimals = Number.isInteger(end) ? 0 : 1; 
-                    obj.innerText = currentVal.toLocaleString('zh-CN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-                }
+                const decimals = isCurrency ? 2 : (Number.isInteger(end) ? 0 : 1);
+                obj.innerText = currentVal.toLocaleString('zh-CN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
                 if (progress < 1) window.requestAnimationFrame(step);
-                else obj.innerText = end.toLocaleString('zh-CN', { minimumFractionDigits: isCurrency ? 2 : (Number.isInteger(end) ? 0 : 1), maximumFractionDigits: isCurrency ? 2 : (Number.isInteger(end) ? 0 : 1) });
+                else obj.innerText = end.toLocaleString('zh-CN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
             };
             if(duration > 0) window.requestAnimationFrame(step);
-            else obj.innerText = end.toLocaleString('zh-CN', { minimumFractionDigits: isCurrency ? 2 : (Number.isInteger(end) ? 0 : 1) });
+            else {
+                const decimals = isCurrency ? 2 : (Number.isInteger(end) ? 0 : 1);
+                obj.innerText = end.toLocaleString('zh-CN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+            }
         }
 
+        // ==========================================
+        // 成本库管理 (LocalStorage)
+        // ==========================================
         function loadCostDB() {
             const saved = localStorage.getItem('wb_cost_db_max');
             if (saved) costDB = JSON.parse(saved);
         }
-
-        function saveCostDB() {
-            localStorage.setItem('wb_cost_db_max', JSON.stringify(costDB));
+        function saveCostDB() { localStorage.setItem('wb_cost_db_max', JSON.stringify(costDB)); }
+        function triggerDashboardAutoRefresh() {
+            if (rawData.financial && document.getElementById('module-dashboard').style.display === 'block') {
+                calculateAndRenderDashboard(rawData.financial, false); 
+            }
+            showToast("成本库更新成功！");
         }
 
         function renderCostTable() {
@@ -541,46 +682,31 @@
             tbody.innerHTML = '';
             const keys = Object.keys(costDB);
             if (keys.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-12 text-center text-slate-400 font-bold bg-slate-50/50">数据库空空如也，请录入商品成本</td></tr>`;
-                return;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-12 text-center text-slate-400 font-bold bg-slate-50/50">数据库空空如也，请录入商品成本</td></tr>`; return;
             }
             keys.reverse().forEach(id => {
                 const item = costDB[id];
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
-                    <td class="p-4 font-mono font-black text-slate-700">${id}</td>
-                    <td class="p-4 font-bold text-slate-600">¥ ${item.cost}</td>
-                    <td class="p-4 font-bold text-slate-500">${item.rate}</td>
-                    <td class="p-4 font-black text-brand-600">${(item.cost * item.rate).toFixed(2)}</td>
-                    <td class="p-4 text-center"><button onclick="deleteCost('${id}')" class="text-slate-300 hover:text-rose-500 transition-colors p-1"><i class="ph-fill ph-trash-simple text-lg"></i></button></td>
+                    <td class="p-3 font-mono font-black text-slate-700">${id}</td>
+                    <td class="p-3 font-bold text-slate-600">¥ ${item.cost}</td>
+                    <td class="p-3 font-bold text-slate-500">${item.rate}</td>
+                    <td class="p-3 font-black text-brand-600">${(item.cost * item.rate).toFixed(2)}</td>
+                    <td class="p-3 text-center"><button onclick="deleteCost('${id}')" class="text-slate-300 hover:text-rose-500 transition-colors p-1"><i class="ph-fill ph-trash-simple text-lg"></i></button></td>
                 `;
                 tbody.appendChild(tr);
             });
-        }
-
-        function triggerDashboardAutoRefresh() {
-            if (currentReportJSON) {
-                calculateAndRenderDashboard(currentReportJSON, false); 
-                showToast("同步成功：数据看板利润已根据新成本重算！");
-            } else {
-                showToast("成本保存成功！");
-            }
         }
 
         function addSingleCost() {
             const id = document.getElementById('add_id').value.trim();
             const cost = parseFloat(document.getElementById('add_cost').value);
             let rate = parseFloat(document.getElementById('add_rate').value);
-            
             if (!id || isNaN(cost)) { alert("WB 编号和 RMB 成本为必填项！"); return; }
             if (isNaN(rate)) rate = 12; 
-            
-            let newDB = {};
-            newDB[id] = { cost: cost, rate: rate };
-            Object.assign(newDB, costDB);
-            costDB = newDB;
-
+            let newDB = {}; newDB[id] = { cost: cost, rate: rate };
+            Object.assign(newDB, costDB); costDB = newDB;
             saveCostDB(); renderCostTable();
             document.getElementById('add_id').value = ''; document.getElementById('add_cost').value = ''; document.getElementById('add_rate').value = '';
             triggerDashboardAutoRefresh();
@@ -588,15 +714,12 @@
 
         function deleteCost(id) {
             if(confirm(`删除商品编号 [${id}] 的成本？`)) {
-                delete costDB[id]; saveCostDB(); renderCostTable();
-                triggerDashboardAutoRefresh();
+                delete costDB[id]; saveCostDB(); renderCostTable(); triggerDashboardAutoRefresh();
             }
         }
-
         function clearAllCosts() {
             if(confirm('🚨 高危操作：确定清空本地所有 SKU 成本映射吗？此操作不可逆！')) {
-                costDB = {}; saveCostDB(); renderCostTable();
-                triggerDashboardAutoRefresh();
+                costDB = {}; saveCostDB(); renderCostTable(); triggerDashboardAutoRefresh();
             }
         }
 
@@ -609,65 +732,59 @@
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, {type: 'array'});
                     const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1});
-                    
                     let count = 0;
                     for (let i = 1; i < json.length; i++) {
-                        const row = json[i];
-                        if (!row || row.length === 0) continue;
+                        const row = json[i]; if (!row || row.length === 0) continue;
                         const id = String(row[0] || '').trim();
                         const cost = parseFloat(row[1]);
                         let rate = parseFloat(row[2]);
-                        
                         if (isNaN(rate)) rate = 12;
-
-                        if (id && !isNaN(cost)) {
-                            costDB[id] = { cost: cost, rate: rate };
-                            count++;
-                        }
+                        if (id && !isNaN(cost)) { costDB[id] = { cost: cost, rate: rate }; count++; }
                     }
-                    saveCostDB(); renderCostTable();
-                    triggerDashboardAutoRefresh();
-                    if(!currentReportJSON) showToast(`成功读取 Excel，覆盖/导入了 ${count} 条成本数据。`);
+                    saveCostDB(); renderCostTable(); triggerDashboardAutoRefresh();
+                    showToast(`成功导入 ${count} 条成本数据。`);
                 } catch(err) { alert("读取失败，请确保格式正确(A列编号, B列成本, C列汇率)"); }
             };
             reader.readAsArrayBuffer(file);
             this.value = null; 
         });
 
-        document.getElementById('wbReportInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+        // ==========================================
+        // 核心报表上传监听
+        // ==========================================
+        function handleFileUI(inputId, statusId, dbKey) {
+            document.getElementById(inputId).addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const statusEl = document.getElementById(statusId);
+                statusEl.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> 解析中...`;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    setTimeout(() => {
+                        try {
+                            const data = new Uint8Array(e.target.result);
+                            const workbook = XLSX.read(data, {type: 'array'});
+                            rawData[dbKey] = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1});
+                            statusEl.innerHTML = `<i class="ph-bold ph-check-circle text-emerald-500"></i> 成功 (${rawData[dbKey].length - 1} 行)`;
+                            statusEl.className = "text-[10px] text-emerald-600 font-bold mt-0.5 flex items-center gap-1";
+                            if(dbKey === 'financial') showToast("财务报告加载成功，可前往大盘查看。");
+                        } catch (error) {
+                            statusEl.innerHTML = `<i class="ph-bold ph-warning text-rose-500"></i> 解析失败`;
+                            statusEl.className = "text-[10px] text-rose-600 font-bold mt-0.5 flex items-center gap-1";
+                        }
+                    }, 50);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+        handleFileUI('upload-financial', 'status-financial', 'financial');
+        handleFileUI('upload-inventory', 'status-inventory', 'inventory');
+        handleFileUI('upload-storage', 'status-storage', 'storage');
+        handleFileUI('upload-ads', 'status-ads', 'ads');
 
-            document.getElementById('uploadUI').style.display = 'none';
-            document.getElementById('loading').style.display = 'flex';
-            document.getElementById('results').style.display = 'none';
-            document.getElementById('missing-sku-alert').style.display = 'none';
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                setTimeout(() => { 
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, {type: 'array'});
-                        currentReportJSON = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1});
-                        
-                        calculateAndRenderDashboard(currentReportJSON, true);
-
-                        document.getElementById('loading').style.display = 'none';
-                        document.getElementById('uploadUI').style.display = 'block';
-                        document.getElementById('results').style.display = 'block';
-                    } catch (error) {
-                        console.error(error);
-                        alert("引擎解析受阻，请确保拖入的是未被破坏的 WB 财务原表(.xlsx)");
-                        document.getElementById('loading').style.display = 'none';
-                        document.getElementById('uploadUI').style.display = 'block';
-                    }
-                }, 400);
-            };
-            reader.readAsArrayBuffer(file);
-            this.value = null; 
-        });
-
+        // ==========================================
+        // 大盘看板渲染引擎 (Dashboard)
+        // ==========================================
         function calculateAndRenderDashboard(json, useAnimation) {
             let qianshou_T = 0, qianshou_N = 0, tuihuo_T = 0, tuihuo_N = 0;
             let wb_sale_pos = 0, wb_sale_neg = 0, delivery_total = 0, delivery_sub = 0;
@@ -676,14 +793,10 @@
             let quexian_peichang = 0, sunhai_peichang = 0, fakuan = 0, ewai_fukuan = 0;
             let total_cogs = 0; 
             let missingSKUs = new Set(); 
-            
-            // 日期追踪器
-            let minTime = Infinity;
-            let maxTime = -Infinity;
+            let minTime = Infinity, maxTime = -Infinity;
 
             for (let i = 0; i < json.length; i++) {
-                const row = json[i];
-                if (!row || row.length < 10) continue; 
+                const row = json[i]; if (!row || row.length < 10) continue; 
 
                 const status_J = String(row[9] || '').trim();
                 const status_K = String(row[10] || '').trim();
@@ -696,7 +809,6 @@
                 const val_AP = parseWBNumber(row[41]); const val_BH = parseWBNumber(row[59]); const val_BI = parseWBNumber(row[60]);
                 const val_BJ = parseWBNumber(row[61]);
 
-                // ★ 修改：日期追踪逻辑 - 仅以出售日期(M列, index 12)为准
                 if (SALE_STATUS.includes(status_K) || RETURN_STATUS.includes(status_K)) {
                     const dateM = parseWBDate(row[12]);
                     if (dateM) {
@@ -708,11 +820,8 @@
 
                 let unit_cogs_rub = 0; 
                 if (current_wb_id && (SALE_STATUS.includes(status_K) || RETURN_STATUS.includes(status_K))) {
-                    if (costDB[current_wb_id]) {
-                        unit_cogs_rub = costDB[current_wb_id].cost * costDB[current_wb_id].rate;
-                    } else {
-                        missingSKUs.add(current_wb_id); 
-                    }
+                    if (costDB[current_wb_id]) { unit_cogs_rub = costDB[current_wb_id].cost * costDB[current_wb_id].rate; } 
+                    else { missingSKUs.add(current_wb_id); }
                     if (SALE_STATUS.includes(status_K)) total_cogs += unit_cogs_rub;
                     else if (RETURN_STATUS.includes(status_K)) total_cogs -= unit_cogs_rub;
                 }
@@ -732,27 +841,19 @@
                 wuliu += val_AK; cangchu += val_BH; qita_kouchu += val_BI; yanshou_sum += val_BJ; fakuan += val_AO; ewai_fukuan += val_AP;
                 
                 const defect_status = ["Компенсация брака", "Оплата брака", "Частичная компенсация брака", "Добровольная компенсация при возврате"];
-                if (defect_status.includes(status_K)) {
-                    if (status_J === "Продажа") quexian_peichang += val_AH; if (status_J === "Возврат") quexian_peichang -= val_AH;
-                }
+                if (defect_status.includes(status_K)) { if (status_J === "Продажа") quexian_peichang += val_AH; if (status_J === "Возврат") quexian_peichang -= val_AH; }
                 const damage_status = ["Оплата потерянного товара", "Компенсация потерянного товара", "Авансовая оплата за товар без движения", "Компенсация подмененного товара", "Компенсация подмен", "Компенсация ущерба", "Компенсация подмена"];
-                if (damage_status.includes(status_K)) {
-                    if (status_J === "Продажа") sunhai_peichang += val_AH; if (status_J === "Возврат") sunhai_peichang -= val_AH;
-                }
+                if (damage_status.includes(status_K)) { if (status_J === "Продажа") sunhai_peichang += val_AH; if (status_J === "Возврат") sunhai_peichang -= val_AH; }
             }
 
-            // 渲染标题处的日期跨度
             const dateRangeEl = document.getElementById('report-date-range');
             const dateTextEl = document.getElementById('date-range-text');
             if (minTime !== Infinity && maxTime !== -Infinity) {
-                const d1 = new Date(minTime);
-                const d2 = new Date(maxTime);
+                const d1 = new Date(minTime); const d2 = new Date(maxTime);
                 const formatD = (d) => `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
                 dateTextEl.innerText = `${formatD(d1)} - ${formatD(d2)}`;
                 dateRangeEl.classList.remove('hidden');
-            } else {
-                dateRangeEl.classList.add('hidden');
-            }
+            } else { dateRangeEl.classList.add('hidden'); }
 
             const shouru = qianshou_T - tuihuo_T;
             const shouru_jian = qianshou_N - tuihuo_N;
@@ -786,8 +887,7 @@
             }
 
             const profitCard = document.getElementById('profit-card-container');
-            if (net_profit < 0) { profitCard.classList.add('loss'); } 
-            else { profitCard.classList.remove('loss'); }
+            if (net_profit < 0) { profitCard.classList.add('loss'); } else { profitCard.classList.remove('loss'); }
 
             const animSpeed = useAnimation ? 1200 : 0; 
             
@@ -812,16 +912,13 @@
             animateValue('val_jiaohuo_shuliang', 0, jiaohuo_shuliang, animSpeed, false); animateValue('val_qianshou_lv', 0, qianshou_lv, animSpeed, true);
 
             renderPieChart([
-                Math.max(0, net_profit), 
-                total_cogs, 
-                yongjin, wuliu, cangchu, yinxing_shoudan, qita_kouchu, yanshou, fakuan
+                Math.max(0, net_profit), total_cogs, yongjin, wuliu, cangchu, yinxing_shoudan, qita_kouchu, yanshou, fakuan
             ]);
         }
 
         function renderPieChart(dataArr) {
             const ctx = document.getElementById('expenseChart').getContext('2d');
             if (expenseChartInstance) { expenseChartInstance.destroy(); }
-            
             const sum = dataArr.reduce((a, b) => a + b, 0);
 
             expenseChartInstance = new Chart(ctx, {
@@ -830,9 +927,7 @@
                     labels: ['最终净利润', '商品成本(COGS)', '佣金', '物流', '仓储', '银行收单', '其它/推广', '验收', '罚款'],
                     datasets: [{
                         data: dataArr,
-                        backgroundColor: [
-                            '#10b981', '#f97316', '#d946ef', '#3b82f6', '#8b5cf6', '#f59e0b', '#64748b', '#14b8a6', '#ef4444'
-                        ],
+                        backgroundColor: ['#10b981', '#f97316', '#d946ef', '#3b82f6', '#8b5cf6', '#f59e0b', '#64748b', '#14b8a6', '#ef4444'],
                         borderWidth: 2, borderColor: '#ffffff', hoverOffset: 15
                     }]
                 },
@@ -844,11 +939,10 @@
                             backgroundColor: 'rgba(15, 23, 42, 0.9)', padding: 12, titleFont: { size: 13, family: 'Inter' }, bodyFont: { size: 14, family: 'Inter', weight: 'bold' },
                             callbacks: { 
                                 label: function(context) { 
-                                    let label = context.label || '';
-                                    if (label) { label += ': '; }
+                                    let label = context.label || ''; if (label) label += ': ';
                                     if (context.raw !== null) {
                                         label += '₽ ' + context.raw.toLocaleString('zh-CN', {minimumFractionDigits: 2});
-                                        if(context.label === '最终净利润' && context.raw === 0) label += ' (因亏损此处占比隐藏)';
+                                        if(context.label === '最终净利润' && context.raw === 0) label += ' (因亏损此处隐藏)';
                                     }
                                     return label; 
                                 }
@@ -867,6 +961,772 @@
                     }
                 }
             });
+        }
+
+
+        // ==========================================
+        // SKU 精算台渲染引擎 (SKU Detail/Brief)
+        // ==========================================
+        const columnsConfig = [
+            { key: 'sellerSku', label: '卖家商品编号', type: 'string', align: 'left', minW: '150px' },
+            { key: 'wbSku', label: 'WB商品编号', type: 'string', align: 'left', minW: '120px', groupBorder: true },
+            { key: 'size', label: '尺寸', type: 'string', align: 'center' },
+            { key: 'barcode', label: '条形码', type: 'string', align: 'center', groupBorder: true },
+            { key: 'inTransit', label: '在途', type: 'number', align: 'center', bg: 'bg-blue-50' },
+            { key: 'returned', label: '退回', type: 'number', align: 'center', bg: 'bg-blue-50' },
+            { key: 'stock', label: '库存', type: 'number', align: 'center', bg: 'bg-blue-50', groupBorder: true, color: 'text-blue-600 font-bold' },
+            { key: 'revenuePerItem', label: '收入/件', type: 'number', align: 'center', color: 'text-emerald-600 font-bold' },
+            { key: 'signoffItem', label: '签收/件', type: 'number', align: 'center', color: 'text-slate-700 font-bold' },
+            { key: 'returnItem', label: '退货/件', type: 'number', align: 'center', color: 'text-rose-500 font-bold' },
+            { key: 'damageItem', label: '货损处理/件', type: 'number', align: 'center', color: 'text-amber-500 font-bold' },
+            { key: 'deliveryCount', label: '交货次数', type: 'number', align: 'center', color: 'text-slate-700 font-bold' },
+            { key: 'signoffRate', label: '签收率%', type: 'percent', align: 'center', color: 'text-brand-600 font-bold', groupBorder: true },
+            { key: 'signoffSum', label: '签收(₽)', type: 'money', align: 'center', color: 'text-emerald-600 font-bold' },
+            { key: 'returnSum', label: '退货(₽)', type: 'money', align: 'center', color: 'text-rose-500 font-bold' },
+            { key: 'gmv', label: 'GMV', type: 'money', align: 'center', bg: 'bg-slate-100', color: 'text-slate-800 font-black', groupBorder: true },
+            { key: 'commission', label: '佣金', type: 'money', align: 'center', color: 'text-slate-700 font-medium' },
+            { key: 'bankFee', label: '银行收单付款', type: 'money', align: 'center', color: 'text-slate-700 font-medium' },
+            { key: 'logistics', label: '物流', type: 'money', align: 'center', color: 'text-slate-700 font-medium' },
+            { key: 'storage', label: '存储费', type: 'money', align: 'center', bg: 'bg-purple-50', color: 'text-purple-700 font-medium' },
+            { key: 'otherDeductions', label: '其他扣除(推广)', type: 'money', align: 'center', bg: 'bg-orange-50', color: 'text-orange-700 font-medium' },
+            { key: 'acceptanceFee', label: '验收费用', type: 'money', align: 'center', color: 'text-slate-700 font-medium', groupBorder: true },
+            { key: 'defectComp', label: '缺陷赔偿', type: 'money', align: 'center', color: 'text-teal-600 font-bold' },
+            { key: 'damageComp', label: '损害赔偿', type: 'money', align: 'center', color: 'text-teal-600 font-bold' },
+            { key: 'fines', label: '罚款', type: 'money', align: 'center', color: 'text-rose-600 font-bold' },
+            { key: 'extraPayment', label: '额外付款', type: 'money', align: 'center', color: 'text-amber-600 font-bold', groupBorder: true },
+            { key: 'unallocatedFee', label: '无法分明细杂费', type: 'money', align: 'center', color: 'text-slate-500 font-medium' },
+            { key: 'allocatedFee', label: '按销售额平摊杂费', type: 'money', align: 'center', bg: 'bg-brand-50', color: 'text-brand-700 font-bold', groupBorder: true },
+            { key: 'cnyCost', label: '成本(¥)', type: 'money', align: 'center', color: 'text-slate-700 font-medium' },
+            { key: 'exchangeRate', label: '汇率', type: 'number', align: 'center', color: 'text-slate-700 font-medium' },
+            { key: 'incomeCost', label: '收入成本', type: 'money', align: 'center', color: 'text-slate-700 font-medium' },
+            { key: 'bookCost', label: '账面成本', type: 'money', align: 'center', color: 'text-slate-700 font-medium', groupBorder: true },
+            { key: 'grossProfit', label: '毛利', type: 'money', align: 'center', bg: 'dark-cell' },
+            { key: 'bookGrossProfit', label: '账面毛利', type: 'money', align: 'center', bg: 'dark-cell' }
+        ];
+
+        let foldedState = { 'grp-inv': true, 'grp-signoff': true, 'grp-fee': true, 'grp-avgprice': true, 'grp-calc': true };
+
+        const briefColumnsConfig = [
+            { key: 'sellerSku', label: '货号', type: 'string', align: 'left', minW: '150px', bg: 'cell-main' },
+            { key: 'inTransit', label: '运输', type: 'number', align: 'center', group: 'grp-inv', bg: 'cell-sub' },
+            { key: 'returned', label: '退回', type: 'number', align: 'center', group: 'grp-inv', bg: 'cell-sub' },
+            { key: 'stock', label: '平台库存', type: 'number', align: 'center', group: 'grp-inv', bg: 'cell-sub' },
+            { key: 'totalPlatformStock', label: '平台总库存', type: 'number', align: 'center', groupBorder: true, toggleControl: 'grp-inv', bg: 'cell-main' },
+            
+            { key: 'actualPurchase', label: '实际购买', type: 'number', align: 'center', group: 'grp-signoff', bg: 'cell-sub' },
+            { key: 'signoffItem', label: '签收', type: 'number', align: 'center', group: 'grp-signoff', bg: 'cell-sub' },
+            { key: 'returnItem', label: '退货', type: 'number', align: 'center', group: 'grp-signoff', bg: 'cell-sub' },
+            { key: 'damageItem', label: '货损处理', type: 'number', align: 'center', group: 'grp-signoff', bg: 'cell-sub' },
+            { key: 'deliveryCount', label: '交货次数', type: 'number', align: 'center', bg: 'cell-main' },
+            { key: 'signoffRate', label: '签收率%', type: 'percent', align: 'center', color: 'text-rose-600 font-black text-[14px]', groupBorder: true, toggleControl: 'grp-signoff', bg: 'cell-main' },
+            
+            { key: 'gmv', label: 'GMV', type: 'money', align: 'center', bg: 'cell-main', groupBorder: true },
+            
+            { key: 'pctCommission', label: 'WB佣金占比', type: 'percent', align: 'center', group: 'grp-fee', bg: 'cell-sub' },
+            { key: 'pctBankFee', label: '银行收单付款占比', type: 'percent', align: 'center', group: 'grp-fee', bg: 'cell-sub' },
+            { key: 'pctLogistics', label: '物流占比', type: 'percent', align: 'center', group: 'grp-fee', bg: 'cell-sub' },
+            { key: 'pctStorage', label: '存储费占比', type: 'percent', align: 'center', group: 'grp-fee', bg: 'cell-sub' },
+            { key: 'pctAds', label: '推广和广告占比', type: 'percent', align: 'center', group: 'grp-fee', bg: 'cell-sub' },
+            { key: 'pctDefect', label: '缺陷赔偿占比', type: 'percent', align: 'center', group: 'grp-fee', bg: 'cell-sub' },
+            { key: 'pctDamage', label: '损坏赔偿占比', type: 'percent', align: 'center', group: 'grp-fee', bg: 'cell-sub' },
+            { key: 'pctFines', label: '罚款占比', type: 'percent', align: 'center', group: 'grp-fee', bg: 'cell-sub' },
+            { key: 'pctExtra', label: '额外付款占比', type: 'percent', align: 'center', group: 'grp-fee', bg: 'cell-sub' },
+            { key: 'pctTotalFees', label: '平台费用总比', type: 'percent', align: 'center', color: 'text-rose-600 font-black text-[14px]', groupBorder: true, toggleControl: 'grp-fee', bg: 'cell-main' },
+            
+            { key: 'bookGrossMargin', label: '毛利润(扣除账面成本)', type: 'money', align: 'center', group: 'grp-avgprice', bg: 'cell-sub' },
+            { key: 'avgPrice', label: '平均售价', type: 'money', align: 'center', color: 'text-rose-600 font-black text-[14px]', groupBorder: true, toggleControl: 'grp-avgprice', bg: 'cell-main' },
+            
+            { key: 'totalCost', label: '产品总成本', type: 'money', align: 'center', bg: 'cell-main' },
+            { key: 'totalCostRate', label: '总成本占比', type: 'percent', align: 'center', color: 'text-rose-600 font-black text-[14px]', groupBorder: true, bg: 'cell-main' },
+            
+            { key: 'unitBookGrossMargin', label: '单件账面毛利', type: 'money', align: 'center', group: 'grp-calc', bg: 'cell-sub' },
+            { key: 'unitGrossMargin', label: '单件毛利', type: 'money', align: 'center', group: 'grp-calc', bg: 'cell-sub' },
+            { key: 'unitCostRUB', label: '单件产品成本', type: 'money', align: 'center', group: 'grp-calc', bg: 'cell-sub' },
+            { key: 'salesTax6', label: '销售税6%', type: 'money', align: 'center', group: 'grp-calc', bg: 'cell-sub' },
+            { key: 'profitTax15', label: '利润税15%', type: 'money', align: 'center', group: 'grp-calc', bg: 'cell-sub' },
+            { key: 'vat5', label: '增值税5%', type: 'money', align: 'center', group: 'grp-calc', bg: 'cell-sub' },
+            { key: 'estDamage3', label: '预估货损3%', type: 'money', align: 'center', group: 'grp-calc', bg: 'cell-sub' },
+            { key: 'returnAmount', label: '回款金额', type: 'money', align: 'center', group: 'grp-calc', bg: 'cell-sub' },
+            { key: 'returnLoss3', label: '回款损耗3%', type: 'money', align: 'center', group: 'grp-calc', bg: 'cell-sub' },
+            { key: 'netProfitRUB', label: '净利润₽', type: 'money', align: 'center', group: 'grp-calc', bg: 'cell-sub' },
+            
+            { key: 'unitNetProfitRMB', label: '单件净利润RMB', type: 'money', align: 'center', isColorText: true, toggleControl: 'grp-calc', bg: 'cell-main' },
+            { key: 'unitNetProfitRate', label: '单件净利润率', type: 'percent', align: 'center', isDataBar: true, bg: 'cell-main' }, 
+            { key: 'unitROI', label: '单件投资回报率', type: 'percent', align: 'center', isDataBar: true, bg: 'cell-main' }
+        ];
+
+        document.getElementById('tax-system').addEventListener('change', () => {
+            if (skuDataList.length > 0) {
+                generateBriefData(); 
+                if (activeTab === 'brief') applyBriefFiltersAndRender();
+            }
+        });
+
+        function processRealData() {
+            if (!rawData.financial) { alert("🚨 请先前往【数据导入】页面上传 WB 财务报告！"); return; }
+
+            let skuMap = {}; let globalUnallocated = 0; let originIndexCounter = 0;
+
+            for (let i = 1; i < rawData.financial.length; i++) {
+                const row = rawData.financial[i]; if (!row || row.length < 10) continue;
+                const wbId = cleanStr(row[3]); if (!wbId) continue;
+
+                if (!skuMap[wbId]) {
+                    skuMap[wbId] = {
+                        originalIndex: originIndexCounter++,
+                        wbSku: wbId, sellerSku: cleanStr(row[5]) || "未知", size: cleanStr(row[7]) || "-", barcode: cleanStr(row[8]) || "-",
+                        inTransit: 0, returned: 0, stock: 0,
+                        signoffItem: 0, returnItem: 0, damageItem: 0, deliveryCount: 0,
+                        signoffSum: 0, returnSum: 0,
+                        bankFee: 0, logistics: 0, storage: 0, otherDeductions: 0, acceptanceFee: 0,
+                        defectComp: 0, damageComp: 0, fines: 0, extraPayment: 0,
+                        ahSalesForComm: 0, ahReturnsForComm: 0, ahKorr: 0,
+                        cnyCost: 0, exchangeRate: 0, incomeCost: 0, bookCost: 0, grossProfit: 0, bookGrossProfit: 0, unallocatedFee: 0,
+                        revenuePerItem: 0 
+                    };
+                }
+
+                const s = skuMap[wbId];
+                const statusJ = cleanStr(row[9]); const statusK = cleanStr(row[10]); const statusAQ = cleanStr(row[42]);
+                const valN = parseWBNumber(row[13]); const valT = parseWBNumber(row[19]); 
+                const valAC = parseWBNumber(row[28]); const valAD = parseWBNumber(row[29]); const valAH = parseWBNumber(row[33]); 
+                const valAI = parseWBNumber(row[34]); const valAK = parseWBNumber(row[36]); const valAO = parseWBNumber(row[40]); const valAP = parseWBNumber(row[41]); 
+                const valBI_actual = parseWBNumber(row[60]) || parseWBNumber(row[59]); const valBJ_actual = parseWBNumber(row[61]);
+
+                if (["Продажа", "Сторно возвратов", "Корректная продажа", "коррекция продаж"].includes(statusK)) { s.signoffItem += valN; s.signoffSum += valT; }
+                if (["Возврат", "Сторно продаж", "Корректный возврат"].includes(statusK)) { s.returnItem += valN; s.returnSum += valT; }
+                if (statusK === "Оплата потерянного товара" || statusK === "Компенсация потерянного товара" || statusK === "Авансовая оплата за товар без движения" || statusK === "Компенсация подмененного товара" || statusK === "Компенсация подмен" || statusK === "Компенсация ущерба" || statusK === "Компенсация подмена") { s.damageItem += (statusJ === "Продажа" ? valN : -valN); }
+
+                s.deliveryCount += valAI;
+                if (statusAQ === "Возврат по инициативе продавца (К продавцу)") s.deliveryCount -= valAI;
+
+                if (valAD > 0) { if (statusJ === "Продажа") s.bankFee += valAC; if (statusJ === "Возврат") s.bankFee -= valAC; }
+                if (statusK === "Корректировка эквайринга") { s.bankFee += valAH; s.ahKorr += valAH; }
+
+                s.logistics += valAK; s.acceptanceFee += valBJ_actual;
+                if (["Компенсация брака", "Оплата брака", "Частичная компенсация брака", "Добровольная компенсация при возврате"].includes(statusK)) s.defectComp += (statusJ === "Продажа" ? valAH : -valAH);
+                if (["Оплата потерянного товара", "Компенсация потерянного товара", "Авансовая оплата за товар без движения", "Компенсация подмененного товара", "Компенсация подмен", "Компенсация ущерба", "Компенсация подмена"].includes(statusK)) s.damageComp += (statusJ === "Продажа" ? valAH : -valAH);
+
+                s.fines += valAO; s.extraPayment += valAP;
+                if (["Продажа", "Сторно возвратов", "Корректная продажа"].includes(statusK) || (statusK === "коррекция продаж" && statusJ === "Продажа")) s.ahSalesForComm += valAH;
+                if (["Возврат", "Сторно продаж", "Корректный возврат"].includes(statusK) || (statusK === "коррекция продаж" && statusJ === "Возврат")) s.ahReturnsForComm += valAH;
+
+                if (statusAQ === "Витрина Магазина" || statusAQ.includes("Списание за отзыв")) globalUnallocated += valBI_actual;
+                if (statusAQ.includes("Штраф за недовоз по поставке")) globalUnallocated += valAO;
+            }
+
+            if (rawData.inventory) {
+                let invMap = {};
+                for (let i = 1; i < rawData.inventory.length; i++) {
+                    const row = rawData.inventory[i]; if(!row) continue;
+                    let key = cleanStr(row[5]); 
+                    if(key) invMap[key] = { inTransit: parseWBNumber(row[7]), returned: parseWBNumber(row[8]), stock: parseWBNumber(row[9]) };
+                }
+                Object.values(skuMap).forEach(s => { let matched = invMap[s.wbSku] || invMap[s.barcode]; if (matched) { s.inTransit = matched.inTransit; s.returned = matched.returned; s.stock = matched.stock; } });
+            }
+
+            if (rawData.storage) {
+                for (let i = 1; i < rawData.storage.length; i++) {
+                    const row = rawData.storage[i]; if(!row) continue;
+                    let barcodeId = cleanStr(row[11]); let fee = parseWBNumber(row[19]);  
+                    let targetSku = Object.values(skuMap).find(s => s.barcode === barcodeId);
+                    if (targetSku) targetSku.storage += fee;
+                }
+            }
+
+            if (rawData.ads) {
+                let adsMap = {};
+                for (let i = 1; i < rawData.ads.length; i++) {
+                    const row = rawData.ads[i]; if(!row) continue;
+                    let wbIdAd = cleanStr(row[1]); let fee = parseWBNumber(row[2]);      
+                    if (wbIdAd) adsMap[wbIdAd] = (adsMap[wbIdAd] || 0) + fee;
+                }
+                Object.values(skuMap).forEach(s => { if (adsMap[s.wbSku]) s.otherDeductions = adsMap[s.wbSku]; });
+            }
+
+            const globalRate = parseFloat(document.getElementById('global-rate').value) || 12;
+            skuDataList = Object.values(skuMap);
+            let totalGMV = 0;
+
+            skuDataList.forEach(s => {
+                s.revenuePerItem = s.signoffItem - s.returnItem; 
+                s.signoffRate = s.deliveryCount ? (s.signoffItem / s.deliveryCount) * 100 : 0;
+                s.gmv = s.signoffSum - s.returnSum; totalGMV += s.gmv;
+                s.commission = s.gmv - (s.ahSalesForComm - s.ahReturnsForComm) - s.bankFee + s.ahKorr;
+                s.unallocatedFee = globalUnallocated; 
+            });
+
+            document.getElementById('unallocated-total').classList.remove('hidden');
+            document.getElementById('val_unallocated').innerText = globalUnallocated.toLocaleString('en-US', {minimumFractionDigits: 2});
+
+            skuDataList.forEach(s => {
+                s.allocatedFee = totalGMV > 0 ? (s.gmv / totalGMV) * globalUnallocated : 0;
+                let itemCostData = costDB[s.wbSku];
+                if (itemCostData) {
+                    s.cnyCost = itemCostData.cost; s.exchangeRate = itemCostData.rate > 0 ? itemCostData.rate : globalRate;
+                    let baseBookCost = s.cnyCost; 
+                    s.incomeCost = s.revenuePerItem * s.cnyCost * s.exchangeRate;
+                    s.bookCost = s.revenuePerItem * baseBookCost * s.exchangeRate;
+                } else {
+                    s.cnyCost = 0; s.exchangeRate = 0; s.incomeCost = 0; s.bookCost = 0;
+                }
+
+                let coreDeductions = s.commission + s.bankFee + s.logistics + s.storage + s.otherDeductions + s.acceptanceFee;
+                let compensations = s.defectComp + s.damageComp;
+                s.grossProfit = s.gmv - coreDeductions + compensations - s.allocatedFee - s.incomeCost;
+                s.bookGrossProfit = s.gmv - coreDeductions + compensations - s.allocatedFee - s.bookCost;
+            });
+
+            generateBriefData(); 
+            activeFilters = {}; briefActiveFilters = {};
+            sortConfig = { key: null, direction: null }; briefSortConfig = { key: null, direction: null };
+            document.getElementById('btnClearFilters').classList.add('hidden');
+            if (activeTab === 'main') applyFiltersAndRender(); else applyBriefFiltersAndRender();
+        }
+
+        function generateBriefData() {
+            const taxSystem = document.getElementById('tax-system').value;
+
+            briefDataList = skuDataList.map(item => {
+                const inTransit = item.inTransit || 0; const returned = item.returned || 0; const stock = item.stock || 0;
+                const totalPlatformStock = inTransit + returned + stock;
+
+                const deliveryCount = item.deliveryCount || 0;
+                const actualPurchase = item.revenuePerItem || 0; 
+                const signoffItem = item.signoffItem || 0; const returnItem = item.returnItem || 0; const damageItem = item.damageItem || 0;
+                const signoffRate = item.signoffRate || 0; const gmv = item.gmv || 0;
+
+                const pct = (val) => gmv !== 0 ? (val / gmv) * 100 : 0;
+                const pctCommission = pct(item.commission); const pctBankFee = pct(item.bankFee);
+                const pctLogistics = pct(item.logistics); const pctStorage = pct(item.storage);
+                const pctAds = pct(item.otherDeductions); const pctDefect = pct(item.defectComp);
+                const pctDamage = pct(item.damageComp); const pctFines = pct(item.fines); const pctExtra = pct(item.extraPayment);
+
+                const totalFeesAbs = item.commission + item.bankFee + item.logistics + item.storage + item.otherDeductions + item.fines + item.extraPayment - item.defectComp - item.damageComp;
+                const pctTotalFees = gmv !== 0 ? (totalFeesAbs / gmv) * 100 : 0;
+
+                const bookGrossMargin = item.bookGrossProfit || 0;
+                const avgPrice = actualPurchase > 0 ? (gmv / actualPurchase) : 0;
+                const totalCost = item.incomeCost || 0; const totalCostRate = pct(totalCost);
+
+                const unitBookGrossMargin = actualPurchase > 0 ? (bookGrossMargin / actualPurchase) : (actualPurchase < 0 ? -(bookGrossMargin / actualPurchase) : 0);
+                const unitCostRUB = actualPurchase !== 0 ? (totalCost / actualPurchase) : 0;
+                const unitGrossMargin = actualPurchase > 0 ? ((item.grossProfit || 0) / actualPurchase) + unitCostRUB : (actualPurchase < 0 ? -((item.grossProfit || 0) / actualPurchase) + unitCostRUB : 0);
+
+                const salesTax6 = avgPrice > 0 ? avgPrice * 0.06 : 0;
+                const profitTax15 = unitBookGrossMargin > 0 ? unitBookGrossMargin * 0.15 : 0;
+                const vat5 = avgPrice * (5 / 105);
+                const estDamage3 = avgPrice * 0.03;
+                
+                let dynamicTax = 0;
+                if (taxSystem === 'tax6') dynamicTax = salesTax6;
+                else if (taxSystem === 'tax15') dynamicTax = profitTax15;
+                else if (taxSystem === 'tax6_vat5') dynamicTax = salesTax6 + vat5;
+                else if (taxSystem === 'tax15_vat5') dynamicTax = profitTax15 + vat5;
+                
+                const returnAmount = unitGrossMargin - unitCostRUB - dynamicTax;
+                const returnLoss3 = returnAmount > 0 ? returnAmount * 0.03 : 0; 
+                const netProfitRUB = returnAmount - estDamage3 - returnLoss3;
+
+                const exRate = item.exchangeRate || 12;
+                const unitNetProfitRMB = netProfitRUB / exRate;
+                const unitNetProfitRate = avgPrice !== 0 ? (netProfitRUB / avgPrice) * 100 : 0;
+                const cnyCost = item.cnyCost || 0;
+                const unitROI = cnyCost !== 0 ? (unitNetProfitRMB / cnyCost) * 100 : 0;
+
+                return {
+                    sellerSku: item.sellerSku, wbSku: item.wbSku, barcode: item.barcode,
+                    inTransit, returned, stock, totalPlatformStock,
+                    deliveryCount, actualPurchase, signoffItem, returnItem, damageItem, signoffRate,
+                    gmv,
+                    pctCommission, pctBankFee, pctLogistics, pctStorage, pctAds, pctDefect, pctDamage, pctFines, pctExtra, pctTotalFees,
+                    bookGrossMargin, avgPrice, totalCost, totalCostRate,
+                    unitBookGrossMargin, unitGrossMargin, unitCostRUB,
+                    salesTax6, profitTax15, vat5, estDamage3, returnAmount, returnLoss3, netProfitRUB,
+                    unitNetProfitRMB, unitNetProfitRate, unitROI
+                };
+            });
+        }
+
+        const formatMoney = (val) => { let n = Number(val); if (isNaN(n)) return "0.00"; return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+        const formatNum = (val) => Number.isInteger(val) ? String(val) : Number(val).toFixed(1);
+        const formatPercent = (val) => { let n = Number(val); if (isNaN(n)) return "0.0%"; return n.toFixed(1) + '%'; };
+
+        function getRawValue(val, type) {
+            if (type === 'string') return val === null || val === undefined ? "" : String(val);
+            if (val === null || val === undefined) return 0;
+            let n = Number(val);
+            if (type === 'percent') return Number(n.toFixed(1));
+            if (type === 'money') return Number(n.toFixed(2));
+            return n;
+        }
+
+        function formatValueForFilter(val, type) {
+            if (val === null || val === undefined) return "";
+            if (type === 'money') return String(formatMoney(val));
+            if (type === 'percent') return String(formatPercent(val));
+            if (type === 'number') return String(formatNum(val));
+            return String(val);
+        }
+
+        function toggleBriefGroup(group) { foldedState[group] = !foldedState[group]; renderBriefHeaders(); renderBriefBody(); }
+
+        function applyFiltersAndRender() {
+            filteredDataList = skuDataList.filter(item => {
+                for (let key in activeFilters) {
+                    if (activeFilters[key].size > 0) {
+                        const colDef = columnsConfig.find(c => c.key === key);
+                        const cellValRaw = getRawValue(item[key], colDef.type);
+                        if (!activeFilters[key].has(cellValRaw)) return false;
+                    }
+                }
+                return true;
+            });
+            if (sortConfig.key) {
+                filteredDataList.sort((a, b) => {
+                    let valA = a[sortConfig.key]; let valB = b[sortConfig.key];
+                    if (typeof valA === 'string') valA = valA.toLowerCase();
+                    if (typeof valB === 'string') valB = valB.toLowerCase();
+                    if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+                    if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            } else { filteredDataList.sort((a, b) => a.originalIndex - b.originalIndex); }
+            renderHeaders(); renderBody();
+            document.getElementById('skuCount').innerText = filteredDataList.length;
+        }
+
+        function renderHeaders() {
+            const thead = document.getElementById('tableHead');
+            let html = '<tr class="text-slate-500 text-[11px] uppercase tracking-wider bg-slate-50">';
+            columnsConfig.forEach((col, index) => {
+                const isSorted = sortConfig.key === col.key;
+                const sortIcon = isSorted ? (sortConfig.direction === 'asc' ? '<i class="ph-bold ph-caret-up text-brand-600"></i>' : '<i class="ph-bold ph-caret-down text-brand-600"></i>') : '<i class="ph-bold ph-caret-up opacity-0 group-hover:opacity-30"></i>';
+                const isFiltered = activeFilters[col.key] && activeFilters[col.key].size > 0;
+                const filterIconClass = isFiltered ? 'text-brand-600 font-bold bg-brand-100 rounded p-0.5 shadow-sm' : 'text-slate-400 hover:text-brand-500 hover:bg-slate-200 rounded p-0.5';
+                
+                let thBg = (col.bg === 'dark-cell') ? 'bg-slate-800 text-white' : 'bg-slate-50'; 
+                let thClasses = `p-3 font-extrabold select-none group transition-colors th-selectable text-${col.align} ${thBg}`;
+                if (col.groupBorder) thClasses += ` border-r-[2px] border-r-slate-400`;
+
+                html += `<th class="${thClasses}" style="${col.minW ? `min-width: ${col.minW};` : ''}" data-col="${index}">
+                        <div class="flex items-center gap-1.5 ${col.align === 'center' ? 'justify-center' : ''}">
+                            <div class="cursor-pointer flex items-center gap-1 head-sort ${col.bg === 'dark-cell' ? 'hover:text-slate-200' : 'hover:text-slate-900'} transition-colors" data-key="${col.key}">
+                                <span>${col.label}</span> ${sortIcon}
+                            </div>
+                            <div class="cursor-pointer ml-1 head-filter ${filterIconClass}" data-key="${col.key}"><i class="ph-fill ph-funnel"></i></div>
+                        </div>
+                    </th>`;
+            });
+            html += '</tr>';
+            thead.innerHTML = html;
+            
+            thead.querySelectorAll('.head-sort').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation(); const key = e.currentTarget.dataset.key;
+                    sortConfig.direction = sortConfig.key === key && sortConfig.direction === 'desc' ? 'asc' : (sortConfig.direction === 'asc' && sortConfig.key === key ? null : 'desc');
+                    if (!sortConfig.direction) sortConfig.key = null; else sortConfig.key = key;
+                    applyFiltersAndRender();
+                });
+            });
+            thead.querySelectorAll('.head-filter').forEach(el => { el.addEventListener('click', (e) => { e.stopPropagation(); openFilterPopup(e.currentTarget, e.currentTarget.dataset.key, 'main'); }); });
+            thead.querySelectorAll('.th-selectable').forEach(el => { el.addEventListener('click', (e) => { if (e.target.closest('.head-sort') || e.target.closest('.head-filter') || e.target.closest('button')) return; selectAllInColumn(parseInt(el.dataset.col), 'tableBody'); }); });
+        }
+
+        function renderBody() {
+            const tbody = document.getElementById('tableBody');
+            if(filteredDataList.length === 0) { tbody.innerHTML = `<tr><td colspan="34" class="p-10 text-center text-slate-400 font-bold">无数据</td></tr>`; return; }
+            let html = '';
+            filteredDataList.forEach((item, rowIndex) => {
+                const isLocked = lockedRows.has(item.wbSku);
+                html += `<tr class="zebra-row transition-colors ${isLocked ? 'row-locked' : ''}">`;
+                columnsConfig.forEach((col, colIndex) => {
+                    let rawVal = item[col.key]; let displayVal = formatValueForFilter(rawVal, col.type);
+                    let tdClass = `p-3 text-${col.align} ${col.color || ''} ${col.bg || ''}`;
+                    if (col.groupBorder) tdClass += ` border-r-[2px] border-r-slate-300`;
+                    if (col.type === 'string' || col.key === 'grossProfit' || col.key === 'bookGrossProfit') tdClass += ' font-bold';
+                    html += `<td class="${tdClass}" data-row="${rowIndex}" data-col="${colIndex}" data-wbid="${item.wbSku}" ${['number', 'money', 'percent'].includes(col.type) ? `data-raw="${rawVal}" data-type="${col.type}"` : ''}>${displayVal}</td>`;
+                });
+                html += `</tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function applyBriefFiltersAndRender() {
+            filteredBriefList = briefDataList.filter(item => {
+                for (let key in briefActiveFilters) {
+                    if (briefActiveFilters[key].size > 0) {
+                        const colDef = briefColumnsConfig.find(c => c.key === key);
+                        const cellValRaw = getRawValue(item[key], colDef.type); 
+                        if (!briefActiveFilters[key].has(cellValRaw)) return false;
+                    }
+                }
+                return true;
+            });
+            if (briefSortConfig.key) {
+                filteredBriefList.sort((a, b) => {
+                    let valA = a[briefSortConfig.key]; let valB = b[briefSortConfig.key];
+                    if (typeof valA === 'string') valA = valA.toLowerCase();
+                    if (typeof valB === 'string') valB = valB.toLowerCase();
+                    if (valA < valB) return briefSortConfig.direction === 'asc' ? -1 : 1;
+                    if (valA > valB) return briefSortConfig.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+            renderBriefHeaders(); renderBriefBody();
+            document.getElementById('skuCount').innerText = filteredBriefList.length;
+        }
+
+        function renderBriefHeaders() {
+            const thead = document.getElementById('briefTableHead');
+            
+            let controlRowHtml = '<tr class="bg-slate-50 border-b border-slate-200">';
+            let titleRowHtml = '<tr class="text-slate-500 text-[11px] uppercase tracking-wider bg-slate-50 shadow-sm">';
+            
+            const groupLabels = { 'grp-inv': '库存明细', 'grp-signoff': '漏斗明细', 'grp-fee': '扣费明细', 'grp-avgprice': '账面毛利', 'grp-calc': '精算明细' };
+            
+            briefColumnsConfig.forEach((col, index) => {
+                let visibilityClass = (col.group && foldedState[col.group]) ? 'col-hidden' : '';
+                
+                let topWidgetHtml = ''; 
+                if (col.toggleControl) {
+                    let isFolded = foldedState[col.toggleControl];
+                    let label = groupLabels[col.toggleControl] || '明细';
+                    let icon = isFolded ? '<i class="ph-bold ph-plus"></i>' : '<i class="ph-bold ph-minus"></i>';
+                    let btnText = isFolded ? `展开${label}` : `收起${label}`;
+                    let btnClass = isFolded ? "bg-white border border-slate-300 text-slate-500 hover:text-brand-600 hover:border-brand-300 shadow-sm" : "bg-slate-200 border border-slate-300 text-slate-600 hover:bg-slate-300 shadow-inner";
+                    topWidgetHtml = `<div class="flex justify-center"><button onclick="toggleBriefGroup('${col.toggleControl}')" class="inline-flex items-center justify-center gap-1.5 px-3 py-1 text-[11px] font-black rounded-full transition-all duration-300 cursor-pointer ${btnClass}">${icon} <span>${btnText}</span></button></div>`;
+                }
+                let thControlClasses = `p-2 font-extrabold select-none transition-colors bg-slate-50 ${visibilityClass}`;
+                if (col.groupBorder) thControlClasses += ` border-r-[2px] border-r-slate-400`;
+                controlRowHtml += `<th class="${thControlClasses}" data-col="${index}">${topWidgetHtml}</th>`;
+
+                const isSorted = briefSortConfig.key === col.key;
+                const sortIcon = isSorted ? (briefSortConfig.direction === 'asc' ? '<i class="ph-bold ph-caret-up text-brand-600"></i>' : '<i class="ph-bold ph-caret-down text-brand-600"></i>') : '<i class="ph-bold ph-caret-up opacity-0 group-hover:opacity-30"></i>';
+                const isFiltered = briefActiveFilters[col.key] && briefActiveFilters[col.key].size > 0;
+                const filterIconClass = isFiltered ? 'text-brand-600 font-bold bg-brand-100 rounded p-0.5 shadow-sm' : 'text-slate-400 hover:text-brand-500 hover:bg-slate-200 rounded p-0.5';
+
+                let thClasses = `p-2 font-extrabold select-none group transition-colors text-${col.align} bg-slate-50 ${visibilityClass} th-selectable-brief`;
+                if (col.groupBorder) thClasses += ` border-r-[2px] border-r-slate-400`;
+
+                titleRowHtml += `
+                    <th class="${thClasses}" style="${col.minW ? `min-width: ${col.minW};` : ''}" data-col="${index}">
+                        <div class="flex items-center gap-1.5 ${col.align === 'center' ? 'justify-center' : (col.align === 'right' ? 'justify-end' : '')}">
+                            <div class="cursor-pointer flex items-center gap-1 head-sort text-slate-700 hover:text-slate-900 transition-colors" data-key="${col.key}">
+                                <span>${col.label}</span> ${sortIcon}
+                            </div>
+                            <div class="cursor-pointer ml-1 head-filter ${filterIconClass}" data-key="${col.key}">
+                                <i class="ph-fill ph-funnel"></i>
+                            </div>
+                        </div>
+                    </th>`;
+            });
+            
+            controlRowHtml += '</tr>'; titleRowHtml += '</tr>';
+            thead.innerHTML = controlRowHtml + titleRowHtml;
+            
+            thead.querySelectorAll('.head-sort').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation(); const key = e.currentTarget.dataset.key;
+                    briefSortConfig.direction = briefSortConfig.key === key && briefSortConfig.direction === 'desc' ? 'asc' : (briefSortConfig.direction === 'asc' && briefSortConfig.key === key ? null : 'desc');
+                    if (!briefSortConfig.direction) briefSortConfig.key = null; else briefSortConfig.key = key;
+                    applyBriefFiltersAndRender();
+                });
+            });
+            thead.querySelectorAll('.head-filter').forEach(el => { el.addEventListener('click', (e) => { e.stopPropagation(); openFilterPopup(e.currentTarget, e.currentTarget.dataset.key, 'brief'); }); });
+            thead.querySelectorAll('.th-selectable-brief').forEach(el => { el.addEventListener('click', (e) => { if (e.target.closest('.head-sort') || e.target.closest('.head-filter') || e.target.closest('button')) return; selectAllInColumn(parseInt(el.dataset.col), 'briefTableBody'); }); });
+        }
+
+        let activePopup = null;
+        function openFilterPopup(targetEl, key, mode) {
+            if (activePopup) activePopup.remove();
+            
+            const isBrief = (mode === 'brief');
+            const configArray = isBrief ? briefColumnsConfig : columnsConfig;
+            const colDef = configArray.find(c => c.key === key);
+            if (!colDef) return;
+
+            const dataSrc = isBrief ? briefDataList : skuDataList;
+            let currentFilter = isBrief ? (briefActiveFilters[key] || new Set()) : (activeFilters[key] || new Set());
+            
+            let uniqueValsMap = new Map();
+            dataSrc.forEach(item => {
+                const rawVal = getRawValue(item[key], colDef.type);
+                const displayVal = formatValueForFilter(item[key], colDef.type);
+                uniqueValsMap.set(rawVal, displayVal);
+            });
+            
+            let sortedRawVals = Array.from(uniqueValsMap.keys()).sort((a, b) => {
+                if (typeof a === 'number' && typeof b === 'number') return a - b;
+                return String(a).localeCompare(String(b));
+            });
+            
+            const isAllSelected = currentFilter.size === 0;
+
+            const popup = document.createElement('div');
+            popup.className = 'filter-popup';
+            const rect = targetEl.getBoundingClientRect();
+            popup.style.top = `${rect.bottom + window.scrollY + 8}px`;
+            popup.style.left = `${Math.min(rect.left + window.scrollX - 100, window.innerWidth - 260)}px`;
+            
+            let listHtml = sortedRawVals.map(rawVal => {
+                const displayVal = uniqueValsMap.get(rawVal);
+                const checked = isAllSelected || currentFilter.has(rawVal) ? 'checked' : '';
+                return `<label class="flex items-center gap-2 px-2 py-1.5 hover:bg-slate-50 rounded cursor-pointer group">
+                        <input type="checkbox" value="${rawVal}" class="filter-cb w-3.5 h-3.5 rounded border-slate-300 text-brand-600 focus:ring-brand-500" ${checked}>
+                        <span class="text-xs font-bold text-slate-600 group-hover:text-slate-900 truncate">${displayVal}</span>
+                    </label>`;
+            }).join('');
+
+            popup.innerHTML = `
+                <div class="flex items-center justify-between mb-3 px-1">
+                    <p class="text-xs font-bold text-slate-800">筛选: ${colDef.label}</p>
+                    <button class="text-slate-400 hover:text-rose-500" onclick="closeFilterPopup()"><i class="ph-bold ph-x"></i></button>
+                </div>
+                <div class="relative mb-2">
+                    <i class="ph-bold ph-magnifying-glass absolute left-2 top-2 text-slate-400 text-xs"></i>
+                    <input type="text" class="w-full text-xs pl-7 pr-2 py-1.5 bg-slate-50 border border-slate-200 rounded focus:outline-none focus:border-brand-400 filter-search font-bold" placeholder="搜索...">
+                </div>
+                <div class="flex items-center gap-2 mb-2 px-1 border-b border-slate-100 pb-2">
+                    <button class="text-[10px] font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 px-2 py-1 rounded transition-colors btn-sel-all">全选</button>
+                    <button class="text-[10px] font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded transition-colors btn-clear-all">清空</button>
+                </div>
+                <div class="filter-list flex-1 overflow-y-auto min-h-[100px] mb-3 pr-1">${listHtml}</div>
+                <button class="w-full py-2 bg-slate-800 text-white text-xs font-bold rounded-lg shadow hover:bg-brand-600 transition-colors btn-apply">确认</button>
+            `;
+            document.body.appendChild(popup);
+            activePopup = popup;
+
+            popup.querySelector('.filter-search').addEventListener('input', (e) => {
+                const t = e.target.value.toLowerCase();
+                popup.querySelectorAll('label').forEach(lbl => { lbl.style.display = lbl.querySelector('span').innerText.toLowerCase().includes(t) ? 'flex' : 'none'; });
+            });
+            popup.querySelector('.btn-sel-all').addEventListener('click', () => popup.querySelectorAll('.filter-cb').forEach(cb => { if(cb.closest('label').style.display !== 'none') cb.checked = true; }));
+            popup.querySelector('.btn-clear-all').addEventListener('click', () => popup.querySelectorAll('.filter-cb').forEach(cb => { if(cb.closest('label').style.display !== 'none') cb.checked = false; }));
+            
+            popup.querySelector('.btn-apply').addEventListener('click', () => {
+                let selected = new Set(); let allChecked = true;
+                popup.querySelectorAll('.filter-cb').forEach(cb => { 
+                    if (cb.checked) {
+                        const parsedVal = (colDef.type === 'string') ? cb.value : Number(cb.value);
+                        selected.add(parsedVal); 
+                    } else { allChecked = false; } 
+                });
+                
+                if (isBrief) {
+                    if (allChecked || selected.size === sortedRawVals.length) delete briefActiveFilters[key]; else briefActiveFilters[key] = selected;
+                    document.getElementById('btnClearFilters').classList.toggle('hidden', Object.keys(briefActiveFilters).length === 0);
+                    applyBriefFiltersAndRender();
+                } else {
+                    if (allChecked || selected.size === sortedRawVals.length) delete activeFilters[key]; else activeFilters[key] = selected;
+                    document.getElementById('btnClearFilters').classList.toggle('hidden', Object.keys(activeFilters).length === 0);
+                    applyFiltersAndRender();
+                }
+                closeFilterPopup();
+            });
+        }
+
+        function renderBriefBody() {
+            const tbody = document.getElementById('briefTableBody');
+            if(filteredBriefList.length === 0) { tbody.innerHTML = `<tr><td colspan="40" class="p-10 text-center text-slate-400 font-bold">无数据</td></tr>`; return; }
+            
+            let maxRate = 0.01; let maxROI = 0.01;
+            if (filteredBriefList.length > 0) {
+                maxRate = Math.max(0.01, ...filteredBriefList.map(item => Math.abs(item.unitNetProfitRate || 0)));
+                maxROI = Math.max(0.01, ...filteredBriefList.map(item => Math.abs(item.unitROI || 0)));
+            }
+
+            let html = '';
+            filteredBriefList.forEach((item, rowIndex) => {
+                const isLocked = lockedRows.has(item.wbSku);
+                html += `<tr class="brief-row transition-colors ${isLocked ? 'row-locked' : ''}">`;
+                
+                briefColumnsConfig.forEach((col, colIndex) => {
+                    let rawVal = item[col.key]; 
+                    
+                    let displayVal;
+                    if (['unitNetProfitRate', 'unitROI'].includes(col.key)) {
+                        let n = Number(rawVal); displayVal = isNaN(n) ? "0.0%" : (n > 0 ? n.toFixed(1) + '%' : (n < 0 ? '-' + Math.abs(n).toFixed(1) + '%' : '0.0%'));
+                    } else if (col.key === 'unitNetProfitRMB') {
+                        let n = Number(rawVal); displayVal = isNaN(n) ? "0.00" : (n > 0 ? n.toFixed(2) : (n < 0 ? '-' + Math.abs(n).toFixed(2) : '0.00'));
+                    } else {
+                        displayVal = formatValueForFilter(rawVal, col.type);
+                    }
+
+                    let visibilityClass = (col.group && foldedState[col.group]) ? 'col-hidden' : '';
+                    let tdClass = `p-2.5 text-${col.align} text-[13px] ${visibilityClass} ${col.bg || ''}`;
+                    if (col.groupBorder) tdClass += ` border-r-[2px] border-r-slate-300`;
+                    
+                    let cellContent = displayVal;
+                    let valNum = parseFloat(rawVal);
+
+                    if (col.isDataBar) {
+                        let maxVal = col.key === 'unitNetProfitRate' ? maxRate : maxROI;
+                        let widthPct = maxVal > 0 ? Math.min(100, (Math.abs(valNum) / maxVal) * 100) : 0;
+                        let barColor = valNum >= 0 ? 'bar-green' : 'bar-red';
+                        
+                        cellContent = `
+                            <div class="data-bar-cell">
+                                <div class="data-bar-bg ${barColor}" style="width: ${widthPct}%"></div>
+                                <span class="relative z-10 text-white font-black drop-shadow-md tracking-wide" style="text-shadow: 0 1px 3px rgba(0,0,0,0.6);">${displayVal}</span>
+                            </div>
+                        `;
+                        tdClass = tdClass.replace('p-2.5', 'p-1');
+                        
+                    } else if (col.isColorText) {
+                        if (valNum > 0) tdClass += ' text-emerald-600 font-black';
+                        else if (valNum < 0) tdClass += ' text-rose-600 font-black';
+                        else tdClass += ' text-slate-900 font-bold';
+                    } else {
+                        if (col.color) tdClass += ` ${col.color}`; else tdClass += ` text-slate-900 font-bold`;
+                    }
+                    
+                    html += `<td class="${tdClass}" data-row="${rowIndex}" data-col="${colIndex}" data-wbid="${item.wbSku}" ${['number', 'money', 'percent'].includes(col.type) ? `data-raw="${rawVal}" data-type="${col.type}"` : ''}>${cellContent}</td>`;
+                });
+                html += `</tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function closeFilterPopup() { if (activePopup) { activePopup.remove(); activePopup = null; } }
+        
+        function clearAllFilters() {
+            if (activeTab === 'brief') briefActiveFilters = {}; else activeFilters = {};
+            document.getElementById('btnClearFilters').classList.add('hidden');
+            if (activeTab === 'brief') applyBriefFiltersAndRender(); else applyFiltersAndRender();
+        }
+
+        document.addEventListener('click', (e) => { if (activePopup && !activePopup.contains(e.target) && !e.target.closest('.head-filter')) closeFilterPopup(); });
+        document.getElementById('tab-main').addEventListener('click', () => switchTab('main'));
+        document.getElementById('tab-brief').addEventListener('click', () => switchTab('brief'));
+
+        function switchTab(tab) {
+            activeTab = tab; clearSelection();
+            const btnMain = document.getElementById('tab-main'); const btnBrief = document.getElementById('tab-brief');
+            const boxMain = document.getElementById('mainTableContainer'); const boxBrief = document.getElementById('briefTableContainer');
+
+            if(tab === 'main') {
+                btnMain.className = "px-5 py-3 rounded-t-xl font-black bg-brand-50 text-brand-700 border-b-2 border-brand-600 transition-colors flex items-center gap-2 text-sm";
+                btnBrief.className = "px-5 py-3 rounded-t-xl font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors flex items-center gap-2 text-sm";
+                boxMain.style.display = 'block'; boxBrief.style.display = 'none';
+                if(skuDataList.length > 0) applyFiltersAndRender();
+            } else {
+                btnBrief.className = "px-5 py-3 rounded-t-xl font-black bg-slate-800 text-white border-b-2 border-slate-900 transition-colors flex items-center gap-2 text-sm";
+                btnMain.className = "px-5 py-3 rounded-t-xl font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors flex items-center gap-2 text-sm";
+                boxMain.style.display = 'none'; boxBrief.style.display = 'block';
+                if(briefDataList.length > 0) applyBriefFiltersAndRender();
+            }
+        }
+
+        // ==========================================
+        // 表格拖拽鼠标选中核心逻辑
+        // ==========================================
+        let isSelecting = false; let startRow = -1, startCol = -1, endRow = -1, endCol = -1; let lastSelectedCell = null; let scrollInterval = null;
+        
+        function handleAltClick(e) {
+            if (e.altKey) {
+                const tr = e.target.closest('tr'); if (!tr || tr.querySelector('td[colspan]')) return;
+                const wbId = tr.querySelector('td[data-wbid]').dataset.wbid;
+                if (lockedRows.has(wbId)) { lockedRows.delete(wbId); tr.classList.remove('row-locked'); } else { lockedRows.add(wbId); tr.classList.add('row-locked'); }
+                e.preventDefault();
+            }
+        }
+
+        function handleMouseDown(e) {
+            if (e.altKey) return; 
+            const td = e.target.closest('td'); if (!td || td.hasAttribute('colspan')) return;
+            let r = parseInt(td.dataset.row); let c = parseInt(td.dataset.col);
+            if (e.shiftKey && lastSelectedCell) {
+                isSelecting = true; startRow = parseInt(lastSelectedCell.dataset.row); startCol = parseInt(lastSelectedCell.dataset.col);
+                endRow = r; endCol = c; updateSelectionVisual(e.ctrlKey || e.metaKey);
+            } else if (e.ctrlKey || e.metaKey) {
+                td.classList.toggle('cell-selected'); lastSelectedCell = td; calculateSelectionSummary();
+            } else {
+                isSelecting = true; startRow = r; startCol = c; endRow = r; endCol = c; lastSelectedCell = td; updateSelectionVisual(false);
+            }
+            e.preventDefault(); 
+        }
+
+        function handleMouseOver(e) {
+            if (!isSelecting) return;
+            const td = e.target.closest('td'); if (!td || td.hasAttribute('colspan')) return;
+            endRow = parseInt(td.dataset.row); endCol = parseInt(td.dataset.col);
+            updateSelectionVisual(e.ctrlKey || e.metaKey);
+        }
+
+        function handleMouseMove(e) {
+            if (!isSelecting) { if (scrollInterval) { clearInterval(scrollInterval); scrollInterval = null; } return; }
+            const container = activeTab === 'main' ? document.getElementById('mainTableContainer') : document.getElementById('briefTableContainer');
+            const rect = container.getBoundingClientRect(); const y = e.clientY - rect.top; const edgeThreshold = 60;
+            if (y > rect.height - edgeThreshold) { if (!scrollInterval) scrollInterval = setInterval(() => { container.scrollTop += 15; }, 20); } 
+            else if (y < edgeThreshold) { if (!scrollInterval) scrollInterval = setInterval(() => { container.scrollTop -= 15; }, 20); } 
+            else { if (scrollInterval) { clearInterval(scrollInterval); scrollInterval = null; } }
+        }
+
+        ['tableBody', 'briefTableBody'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.addEventListener('click', handleAltClick);
+                el.addEventListener('mousedown', handleMouseDown);
+                el.addEventListener('mouseover', handleMouseOver);
+            }
+        });
+
+        document.getElementById('mainTableContainer').addEventListener('mousemove', handleMouseMove);
+        document.getElementById('briefTableContainer').addEventListener('mousemove', handleMouseMove);
+
+        document.addEventListener('mouseup', (e) => {
+            if (isSelecting) { isSelecting = false; if (scrollInterval) { clearInterval(scrollInterval); scrollInterval = null; } calculateSelectionSummary(); } 
+            else if (!e.target.closest('table') && !e.target.closest('#summary-bar') && !e.target.closest('.filter-popup') && !e.altKey) clearSelection();
+        });
+
+        function selectAllInColumn(colIdx, tbodyId) {
+            clearSelection();
+            document.querySelectorAll(`#${tbodyId} td[data-col="${colIdx}"]`).forEach(cell => { if(!cell.classList.contains('col-hidden')) cell.classList.add('cell-selected'); });
+            calculateSelectionSummary();
+        }
+
+        function clearSelection() {
+            document.querySelectorAll('.cell-selected').forEach(el => el.classList.remove('cell-selected'));
+            document.getElementById('summary-bar').classList.remove('translate-y-0', 'opacity-100');
+            document.getElementById('summary-bar').classList.add('translate-y-20', 'opacity-0');
+            lastSelectedCell = null;
+        }
+
+        function updateSelectionVisual(isAppend) {
+            if (!isAppend) document.querySelectorAll('.cell-selected').forEach(el => el.classList.remove('cell-selected'));
+            if(startRow === -1) return;
+            const rMin = Math.min(startRow, endRow); const rMax = Math.max(startRow, endRow);
+            const cMin = Math.min(startCol, endCol); const cMax = Math.max(startCol, endCol);
+            const tbody = document.getElementById(activeTab === 'brief' ? 'briefTableBody' : 'tableBody');
+            
+            for (let r = rMin; r <= rMax; r++) {
+                for (let c = cMin; c <= cMax; c++) {
+                    const cell = tbody.querySelector(`td[data-row="${r}"][data-col="${c}"]`);
+                    if (cell && !cell.classList.contains('col-hidden')) cell.classList.add('cell-selected');
+                }
+            }
+            calculateSelectionSummary();
+        }
+
+        function calculateSelectionSummary() {
+            const selected = document.querySelectorAll('.cell-selected');
+            if (selected.length <= 1) { 
+                document.getElementById('summary-bar').classList.remove('translate-y-0', 'opacity-100');
+                document.getElementById('summary-bar').classList.add('translate-y-20', 'opacity-0');
+                return;
+            }
+            let sum = 0, count = 0;
+            selected.forEach(cell => {
+                if (cell.dataset.raw !== undefined) { const val = parseFloat(cell.dataset.raw); if (!isNaN(val)) { sum += val; count++; } }
+            });
+            if (count > 0) {
+                document.getElementById('sum-val').innerText = sum.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('avg-val').innerText = (sum / count).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('count-val').innerText = count;
+                document.getElementById('summary-bar').classList.remove('translate-y-20', 'opacity-0');
+                document.getElementById('summary-bar').classList.add('translate-y-0', 'opacity-100');
+            }
         }
     </script>
 </body>
