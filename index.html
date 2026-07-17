@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WB 独立运营数据中心 Ultimate</title>
+    <title>WB 数据运营中心</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -17,16 +17,16 @@
             theme: {
                 extend: {
                     fontFamily: { 
-                        sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
-                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+                        sans: ['"Noto Sans SC"', 'Inter', 'system-ui', 'sans-serif'],
+                        mono: ['Inter', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
                     },
                     colors: { 
-                        brand: { 50: '#fdf4ff', 100: '#fae8ff', 500: '#d946ef', 600: '#c026d3', 700: '#a21caf', 900: '#701a75' }
+                        brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 900: '#312e81' }
                     },
                     boxShadow: {
-                        'glass': '0 10px 40px -10px rgba(0,0,0,0.06)',
-                        'glow': '0 0 20px rgba(192, 38, 211, 0.4)',
-                        'floating': '0 15px 35px -5px rgba(0,0,0,0.15)'
+                        'glass': '0 8px 30px -16px rgba(15, 23, 42, 0.18)',
+                        'glow': '0 0 0 4px rgba(79, 70, 229, 0.12)',
+                        'floating': '0 18px 45px -18px rgba(15, 23, 42, 0.35)'
                     }
                 }
             }
@@ -34,122 +34,494 @@
     </script>
     
     <style>
-        /* === 基础与大盘样式 === */
-        body { 
-            background-color: #f4f7f9; 
-            background-image: radial-gradient(#dbeafe 1px, transparent 1px);
-            background-size: 24px 24px;
+        :root {
+            --canvas: #f5f7fb;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --text: #0f172a;
+            --text-soft: #64748b;
+            --line: #e2e8f0;
+            --line-strong: #cbd5e1;
+            --primary: #4f46e5;
+            --primary-soft: #eef2ff;
+            --success: #15803d;
+            --danger: #dc2626;
         }
-        .hero-aurora { 
-            background: linear-gradient(115deg, #4f46e5 0%, #8b5cf6 40%, #db2777 100%);
-            border-bottom: 1px solid rgba(255,255,255,0.15);
-            position: relative;
-            overflow: hidden;
-        }
-        .hero-aurora::before {
-            content: ''; position: absolute; top: -50%; left: -10%; width: 50%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
-            transform: rotate(30deg); pointer-events: none;
-        }
-        .profit-card { background: linear-gradient(135deg, #c026d3 0%, #701a75 100%); box-shadow: 0 20px 40px -15px rgba(112, 26, 117, 0.4); }
-        .profit-card.loss { background: linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%); box-shadow: 0 20px 40px -15px rgba(127, 29, 29, 0.4); }
-        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); }
-        .modern-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .modern-hover:hover { transform: translateY(-4px); box-shadow: 0 15px 35px -10px rgba(0,0,0,0.1); border-color: rgba(192,38,211,0.2); }
-        input[type="file"].hidden-upload { font-size: 0; opacity: 0; cursor: pointer; }
-        
-        /* === SKU 精算台表格专用样式 === */
-        .table-container::-webkit-scrollbar { height: 10px; width: 10px; }
-        .table-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
-        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .table-container { position: relative; }
-        thead { position: sticky; top: 0; z-index: 40; }
-        th { background-color: #f8fafc; border-bottom: 2px solid #94a3b8; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        
-        .zebra-row:nth-child(even) td { background-color: #f8fafc; }
-        .zebra-row:nth-child(odd) td { background-color: #ffffff; }
-        .zebra-row:hover td { background-color: #f1f5f9 !important; }
-        .zebra-row.row-locked td { background-color: #fae8ff !important; border-top: 1px solid rgba(192, 38, 211, 0.3); border-bottom: 1px solid rgba(192, 38, 211, 0.3); }
-        td.dark-cell { background-color: #1e293b !important; color: #ffffff !important; }
-        .zebra-row:hover td.dark-cell { background-color: #f1f5f9 !important; color: #0f172a !important; font-weight: 800; }
-        .zebra-row.row-locked td.dark-cell { background-color: #fae8ff !important; color: #0f172a !important; font-weight: 800; }
-        
-        .brief-row td.cell-main { background-color: #eff6ff !important; } 
-        .brief-row td.cell-sub { background-color: #ffffff !important; }
-        .brief-row:hover td.cell-main, .brief-row:hover td.cell-sub { background-color: #e2e8f0 !important; }
-        .brief-row.row-locked td.cell-main, .brief-row.row-locked td.cell-sub { background-color: #fae8ff !important; border-top: 1px solid rgba(192, 38, 211, 0.3); border-bottom: 1px solid rgba(192, 38, 211, 0.3); }
 
+        * { box-sizing: border-box; }
+        html { background: var(--canvas); }
+        body {
+            background:
+                radial-gradient(circle at 10% -10%, rgba(99, 102, 241, 0.08), transparent 26%),
+                var(--canvas);
+            color: var(--text);
+            font-family: "Noto Sans SC", Inter, system-ui, sans-serif;
+        }
+        button, input, select { font: inherit; }
+        button:focus-visible, input:focus-visible, select:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+        }
+        [id^="val_"], [id^="pct_"], .font-mono, td[data-type] {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* === 顶部导航 === */
+        .hero-aurora {
+            background: rgba(255, 255, 255, 0.94);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: 0 1px 0 rgba(15, 23, 42, 0.02), 0 8px 30px -26px rgba(15, 23, 42, 0.28);
+            position: relative;
+            overflow: visible;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+        .hero-aurora::before { display: none; }
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: linear-gradient(145deg, #6366f1 0%, #4338ca 100%);
+            box-shadow: 0 10px 22px -12px rgba(67, 56, 202, 0.8);
+        }
+        .global-nav-shell {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+        .global-nav-item {
+            min-height: 38px;
+            border-radius: 9px;
+            white-space: nowrap;
+        }
+        .global-nav-active {
+            background: #fff;
+            color: var(--primary);
+            box-shadow: 0 3px 12px -6px rgba(15, 23, 42, 0.3);
+        }
+
+        /* === 通用面板与卡片 === */
+        .glass-panel {
+            background: var(--surface);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border: 1px solid var(--line) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 10px 30px -22px rgba(15, 23, 42, 0.32);
+        }
+        .modern-hover { transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+        .modern-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 34px -24px rgba(15, 23, 42, 0.42);
+            border-color: #c7d2fe !important;
+        }
+        .profit-card {
+            background: linear-gradient(145deg, #312e81 0%, #4f46e5 58%, #6366f1 100%);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 18px !important;
+            box-shadow: 0 24px 45px -28px rgba(49, 46, 129, 0.8);
+        }
+        .profit-card.loss {
+            background: linear-gradient(145deg, #7f1d1d 0%, #b91c1c 58%, #dc2626 100%);
+            box-shadow: 0 24px 45px -28px rgba(127, 29, 29, 0.75);
+        }
+        .profit-card .animate-pulse { animation: none; }
+        input[type="file"].hidden-upload { font-size: 0; opacity: 0; cursor: pointer; }
+        #module-import .group:has(input.hidden-upload) {
+            border-width: 1px !important;
+            border-color: var(--line) !important;
+            box-shadow: none !important;
+        }
+        #module-import .group:has(input.hidden-upload):hover {
+            border-color: #a5b4fc !important;
+            box-shadow: 0 12px 28px -22px rgba(79, 70, 229, 0.55) !important;
+        }
+
+        /* === SKU 工具栏 === */
+        #module-sku { height: calc(100vh - 118px) !important; min-height: 580px; }
+        .sku-toolbar {
+            padding: 14px 18px 12px;
+            border-bottom: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.98);
+        }
+        .sku-subnav {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: #f8fafc;
+        }
+        .sku-tab {
+            min-height: 36px;
+            padding: 7px 13px;
+            border-radius: 8px;
+            border: 0;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            transition: all 0.18s ease;
+        }
+        .sku-tab-active {
+            background: #fff;
+            color: var(--primary);
+            box-shadow: 0 3px 10px -6px rgba(15, 23, 42, 0.35);
+        }
+        .sku-tab-inactive { color: #64748b; }
+        .sku-tab-inactive:hover { color: #334155; background: #f1f5f9; }
+        .row-counter {
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 0 11px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: #fff;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .row-counter strong { color: var(--text); font-size: 13px; }
+        .tax-control-card {
+            min-width: 300px;
+            padding: 7px 10px 6px;
+            border: 1px solid #dbe2ea;
+            border-radius: 11px;
+            background: #fff;
+            box-shadow: 0 3px 12px -10px rgba(15, 23, 42, 0.35);
+        }
+        .tax-control-main { display: flex; align-items: center; gap: 9px; }
+        .tax-icon {
+            width: 31px;
+            height: 31px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+        .tax-control-label {
+            display: block;
+            color: #94a3b8;
+            font-size: 9px;
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+        .tax-select {
+            width: 244px;
+            border: 0;
+            background: transparent;
+            color: #1e293b;
+            font-size: 12px;
+            line-height: 1.3;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+        }
+        .tax-formula-hint {
+            margin: 5px 0 0 40px;
+            color: #64748b;
+            max-width: 244px;
+            font-size: 10px;
+            line-height: 1.4;
+            white-space: normal;
+        }
+        .primary-action {
+            min-height: 44px;
+            padding: 0 17px;
+            border-radius: 10px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 20px -13px rgba(79, 70, 229, 0.8);
+            transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+        }
+        .primary-action:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+            box-shadow: 0 14px 24px -15px rgba(79, 70, 229, 0.9);
+        }
+        .clear-filter-action {
+            min-height: 38px;
+            padding: 0 11px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: #fff;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .clear-filter-action:hover { color: var(--primary); border-color: #c7d2fe; background: var(--primary-soft); }
+
+        /* === 签收简报指标 === */
+        .brief-kpi-strip {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(150px, 1fr));
+            gap: 10px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--line);
+            background: #f8fafc;
+        }
+        .brief-kpi-strip.hidden { display: none; }
+        .brief-kpi-card {
+            min-width: 0;
+            padding: 10px 12px;
+            border: 1px solid #e5e9f0;
+            border-radius: 11px;
+            background: #fff;
+            box-shadow: 0 4px 12px -12px rgba(15, 23, 42, 0.4);
+        }
+        .brief-kpi-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .brief-kpi-label i { color: #818cf8; font-size: 14px; }
+        .brief-kpi-value {
+            margin-top: 4px;
+            color: #172033;
+            font-family: Inter, "Noto Sans SC", sans-serif;
+            font-size: 19px;
+            line-height: 1.1;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .brief-kpi-unit { color: #94a3b8; font-size: 10px; font-weight: 700; margin-left: 3px; }
+        .brief-kpi-value.is-positive { color: var(--success); }
+        .brief-kpi-value.is-negative { color: var(--danger); }
+
+        /* === SKU 表格 === */
+        .table-container { position: relative; background: #fff; }
+        .table-container::-webkit-scrollbar { height: 9px; width: 9px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border: 2px solid #f1f5f9; border-radius: 8px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        #dataTable, #briefTable { font-variant-numeric: tabular-nums; }
+        thead { position: sticky; top: 0; z-index: 40; }
+        th {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #dfe5ec;
+            box-shadow: none;
+            color: #475569;
+        }
+        #dataTable th, #briefTable th { padding: 9px 11px !important; }
+        #dataTable td, #briefTable td {
+            padding: 9px 11px !important;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        #dataTable td[data-type], #briefTable td[data-type] { text-align: right !important; }
+        .zebra-row:nth-child(even) td { background-color: #fbfcfe; }
+        .zebra-row:nth-child(odd) td { background-color: #ffffff; }
+        .zebra-row:hover td { background-color: #f3f6fb !important; }
+        .zebra-row.row-locked td {
+            background-color: #eef2ff !important;
+            border-top: 1px solid #c7d2fe;
+            border-bottom: 1px solid #c7d2fe;
+        }
+        td.dark-cell { background-color: #172033 !important; color: #ffffff !important; }
+        .zebra-row:hover td.dark-cell { background-color: #202a40 !important; color: #ffffff !important; }
+        .zebra-row.row-locked td.dark-cell { background-color: #3730a3 !important; color: #ffffff !important; }
+        .brief-row td.cell-main { background-color: #f6f8ff !important; }
+        .brief-row td.cell-sub { background-color: #ffffff !important; }
+        .brief-row:hover td.cell-main, .brief-row:hover td.cell-sub { background-color: #f1f5f9 !important; }
+        .brief-row.row-locked td.cell-main, .brief-row.row-locked td.cell-sub {
+            background-color: #eef2ff !important;
+            border-top: 1px solid #c7d2fe;
+            border-bottom: 1px solid #c7d2fe;
+        }
         #mainTableContainer th:first-child, #mainTableContainer td:first-child,
-        #briefTableContainer th:first-child, #briefTableContainer td:first-child { position: sticky !important; left: 0 !important; z-index: 30; border-right: 2px solid #94a3b8 !important; }
+        #briefTableContainer th:first-child, #briefTableContainer td:first-child {
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 30;
+            border-right: 1px solid var(--line-strong) !important;
+            box-shadow: 6px 0 14px -13px rgba(15, 23, 42, 0.45);
+        }
         #mainTableContainer thead tr:first-child th:first-child,
         #briefTableContainer thead tr:first-child th:first-child,
-        #briefTableContainer thead tr:nth-child(2) th:first-child { z-index: 50 !important; background-color: #f8fafc !important; }
-
-        #mainTableContainer .zebra-row:nth-child(even) td:first-child { background-color: #f8fafc !important; }
+        #briefTableContainer thead tr:nth-child(2) th:first-child {
+            z-index: 50 !important;
+            background-color: #f8fafc !important;
+        }
+        #mainTableContainer .zebra-row:nth-child(even) td:first-child { background-color: #fbfcfe !important; }
         #mainTableContainer .zebra-row:nth-child(odd) td:first-child { background-color: #ffffff !important; }
-        #mainTableContainer .zebra-row:hover td:first-child { background-color: #f1f5f9 !important; }
-        #mainTableContainer .zebra-row.row-locked td:first-child { background-color: #fae8ff !important; }
-        #briefTableContainer .brief-row td:first-child { background-color: #eff6ff !important; }
-        #briefTableContainer .brief-row:hover td:first-child { background-color: #e2e8f0 !important; }
-        #briefTableContainer .brief-row.row-locked td:first-child { background-color: #fae8ff !important; }
-
+        #mainTableContainer .zebra-row:hover td:first-child { background-color: #f3f6fb !important; }
+        #mainTableContainer .zebra-row.row-locked td:first-child { background-color: #eef2ff !important; }
+        #briefTableContainer .brief-row td:first-child { background-color: #f6f8ff !important; }
+        #briefTableContainer .brief-row:hover td:first-child { background-color: #f1f5f9 !important; }
+        #briefTableContainer .brief-row.row-locked td:first-child { background-color: #eef2ff !important; }
         #dataTable tbody, #briefTable tbody { user-select: none; }
-        .cell-selected { background-color: rgba(192, 38, 211, 0.15) !important; box-shadow: inset 0 0 0 1px #c026d3; }
+        .cell-selected {
+            background-color: rgba(99, 102, 241, 0.13) !important;
+            box-shadow: inset 0 0 0 1px #6366f1;
+        }
         .col-hidden { display: none !important; }
+        .brief-group-toggle {
+            border-radius: 7px !important;
+            box-shadow: none !important;
+        }
 
-        /* === 翠绿/赤红 百分比数据条柱形图 === */
-        .data-bar-cell { position: relative; width: 100%; height: 100%; min-height: 28px; display: flex; align-items: center; justify-content: center; z-index: 1; border-radius: 6px; overflow: hidden; background-color: transparent; }
-        .data-bar-bg { position: absolute; left: 0; top: 0; bottom: 0; z-index: -1; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .bar-green { background: linear-gradient(90deg, #10b981 0%, #059669 100%); }
-        .bar-red { background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); }
-        .data-bar-bg::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: shimmerBar 3.5s infinite ease-in-out; }
-        @keyframes shimmerBar { 0% { left: -100%; } 50% { left: 200%; } 100% { left: 200%; } }
+        /* === 克制型百分比数据条 === */
+        .data-bar-cell {
+            position: relative;
+            width: 100%;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            z-index: 1;
+            border-radius: 7px;
+            overflow: hidden;
+            background: #f1f5f9;
+            padding: 0 8px;
+        }
+        .data-bar-bg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: -1;
+            transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bar-green { background: #dcfce7; }
+        .bar-red { background: #fee2e2; }
+        .data-bar-bg::after { display: none; }
+        .data-bar-label { color: #334155; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; }
 
-        /* === 筛选弹窗 === */
-        .filter-popup { position: absolute; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.15); border-radius: 12px; padding: 12px; z-index: 9999; width: 240px; max-height: 350px; display: flex; flex-direction: column; transform-origin: top right; animation: popDown 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes popDown { from { opacity: 0; transform: translateY(-10px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        /* === 筛选弹窗与状态条 === */
+        .filter-popup {
+            position: absolute;
+            width: 250px;
+            max-height: 370px;
+            display: flex;
+            flex-direction: column;
+            padding: 13px;
+            z-index: 9999;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            box-shadow: 0 22px 55px -25px rgba(15, 23, 42, 0.48);
+            transform-origin: top right;
+            animation: popDown 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes popDown {
+            from { opacity: 0; transform: translateY(-7px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
         .filter-list::-webkit-scrollbar { width: 4px; }
         .filter-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        
-        /* 其他全局滚动条 */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        .selection-summary {
+            max-height: 0;
+            min-height: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 24px;
+            padding: 0 18px;
+            border-top: 0 solid var(--line);
+            background: #172033;
+            color: #fff;
+            transition: max-height 0.22s ease, min-height 0.22s ease, opacity 0.18s ease, transform 0.22s ease, border-width 0.22s ease;
+            pointer-events: none;
+        }
+        .selection-summary.opacity-100 {
+            max-height: 56px;
+            min-height: 56px;
+            border-top-width: 1px;
+        }
+        #toast {
+            border-radius: 12px !important;
+            background: rgba(23, 32, 51, 0.96) !important;
+            box-shadow: 0 20px 45px -22px rgba(15, 23, 42, 0.55) !important;
+        }
+
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        @media (max-width: 1180px) {
+            .brief-kpi-strip { grid-template-columns: repeat(3, minmax(145px, 1fr)); overflow-x: auto; }
+            .tax-control-card { min-width: 280px; }
+        }
+        @media (max-width: 768px) {
+            #module-sku { height: auto !important; min-height: calc(100vh - 120px); }
+            .hero-aurora { padding-top: 12px !important; padding-bottom: 12px !important; }
+            .global-nav-shell { width: 100%; overflow-x: auto; }
+            .global-nav-item { flex: 1 0 auto; justify-content: center; }
+            .sku-toolbar { align-items: stretch !important; }
+            .sku-toolbar-actions { width: 100%; justify-content: flex-start !important; }
+            .tax-control-card { width: 100%; min-width: 0; }
+            .tax-select { width: calc(100vw - 120px); max-width: 320px; }
+            .tax-formula-hint { white-space: normal; }
+            .brief-kpi-strip { grid-template-columns: repeat(2, minmax(145px, 1fr)); }
+            .primary-action { width: 100%; justify-content: center; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
     </style>
 </head>
 <body class="font-sans text-slate-800 antialiased h-screen flex flex-col overflow-hidden">
 
     <!-- === 全局顶部导航 === -->
-    <header class="hero-aurora text-white pt-6 pb-6 flex-shrink-0 z-20 shadow-lg">
-        <div class="max-w-[1800px] mx-auto px-6 flex flex-col md:flex-row items-center justify-between relative z-10 gap-4">
+    <header class="hero-aurora py-3 flex-shrink-0 z-20">
+        <div class="max-w-[1800px] mx-auto px-5 sm:px-6 flex flex-col md:flex-row items-center justify-between relative z-10 gap-3">
             <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-inner">
-                    <i class="ph-bold ph-chart-polar text-2xl text-white"></i>
+                <div class="brand-mark">
+                    <i class="ph-bold ph-chart-line-up text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-black tracking-wide">WB DATA HUB Ultimate</h1>
-                    <p class="text-white/80 text-xs uppercase tracking-widest font-bold mt-0.5">全域利润核算矩阵</p>
+                    <h1 class="text-[17px] font-extrabold tracking-tight text-slate-900">鸿鹄志拓-Wildberries核算系统</h1>
+                    <p class="text-slate-500 text-[10px] font-semibold mt-0.5">利润核算 · SKU 精算 · 经营分析</p>
                 </div>
             </div>
             
             <!-- 全局 Tabs -->
-            <div class="flex bg-black/20 p-1.5 rounded-xl border border-white/10 backdrop-blur-md gap-1 shadow-inner">
-                <button onclick="switchGlobalTab('import')" id="gtab-import" class="px-5 py-2 rounded-lg bg-white text-brand-700 font-extrabold shadow-md transition-all text-sm flex items-center gap-2">
+            <div class="global-nav-shell">
+                <button onclick="switchGlobalTab('import')" id="gtab-import" class="global-nav-item global-nav-active px-4 py-2 text-brand-700 font-extrabold transition-all text-sm flex items-center gap-2">
                     <i class="ph-bold ph-download-simple"></i> 数据导入
                 </button>
-                <button onclick="switchGlobalTab('dashboard')" id="gtab-dashboard" class="px-5 py-2 rounded-lg text-white/90 font-medium hover:bg-white/10 hover:text-white transition-all text-sm flex items-center gap-2">
+                <button onclick="switchGlobalTab('dashboard')" id="gtab-dashboard" class="global-nav-item px-4 py-2 text-slate-500 font-semibold hover:bg-slate-100 hover:text-slate-800 transition-all text-sm flex items-center gap-2">
                     <i class="ph-bold ph-layout"></i> 店铺大盘
                 </button>
-                <button onclick="switchGlobalTab('sku')" id="gtab-sku" class="px-5 py-2 rounded-lg text-white/90 font-medium hover:bg-white/10 hover:text-white transition-all text-sm flex items-center gap-2">
+                <button onclick="switchGlobalTab('sku')" id="gtab-sku" class="global-nav-item px-4 py-2 text-slate-500 font-semibold hover:bg-slate-100 hover:text-slate-800 transition-all text-sm flex items-center gap-2">
                     <i class="ph-bold ph-flask"></i> SKU 精算台
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="flex-1 overflow-y-auto relative z-10 p-4 sm:p-6 lg:p-8">
+    <main class="app-main flex-1 overflow-y-auto relative z-10 p-4 sm:p-5 lg:p-6">
         
         <!-- ========================================== -->
         <!-- MODULE 1: 数据导入 (Data Import & Cost DB) -->
@@ -451,32 +823,40 @@
             <div class="glass-panel rounded-3xl shadow-glass border border-white flex-1 flex flex-col overflow-hidden relative">
                 
                 <!-- 精算台 Toolbar -->
-                <div class="px-4 sm:px-6 pt-4 border-b border-slate-200 bg-white/80 relative z-20 flex flex-wrap justify-between items-end gap-y-3">
-                    <div class="flex items-center gap-2">
-                        <button id="tab-main" class="px-5 py-3 rounded-t-xl font-black bg-brand-50 text-brand-700 border-b-2 border-brand-600 transition-colors flex items-center gap-2 text-sm">
+                <div class="sku-toolbar relative z-20 flex flex-wrap justify-between items-center gap-3">
+                    <div class="sku-subnav">
+                        <button id="tab-main" class="sku-tab sku-tab-active">
                             <i class="ph-bold ph-table"></i> 销售与库存明细
                         </button>
-                        <button id="tab-brief" class="px-5 py-3 rounded-t-xl font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors flex items-center gap-2 text-sm">
+                        <button id="tab-brief" class="sku-tab sku-tab-inactive">
                             <i class="ph-bold ph-chart-line-up"></i> 产品签收简报
                         </button>
                     </div>
                     
-                    <div class="flex items-center gap-4 pb-3 flex-wrap justify-end">
-                        <span class="text-sm font-bold text-brand-600 ml-2">展示行数: <span id="skuCount">0</span></span>
+                    <div class="sku-toolbar-actions flex items-center gap-2 flex-wrap justify-end">
+                        <span class="row-counter"><i class="ph-bold ph-rows"></i> 展示 <strong id="skuCount">0</strong> 行</span>
                         
-                        <button onclick="clearAllFilters()" class="text-slate-400 hover:text-brand-600 font-bold text-sm transition-colors hidden" id="btnClearFilters"><i class="ph-bold ph-funnel-x"></i> 清除筛选</button>
+                        <button onclick="clearAllFilters()" class="clear-filter-action hidden" id="btnClearFilters"><i class="ph-bold ph-funnel-x mr-1"></i> 清除筛选</button>
                         <span id="unallocated-total" class="hidden text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 shadow-inner">
                             全局未分配杂费: <span class="text-slate-800" id="val_unallocated">0</span> ₽
                         </span>
 
-                        <div class="flex items-center bg-slate-800 p-1 rounded-lg shadow-sm border border-slate-700">
-                            <span class="text-white/80 text-xs font-bold px-2 tracking-wide"><i class="ph-bold ph-bank"></i> 店铺税制:</span>
-                            <select id="tax-system" class="bg-slate-700 border border-slate-600 text-white text-xs rounded md:rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all font-bold cursor-pointer hover:bg-slate-600">
-                                <option value="tax6" class="bg-slate-800 text-white">简易税制: 销售税 6%</option>
-                                <option value="tax15" class="bg-slate-800 text-white">标准税制: 利润税 15%</option>
-                                <option value="tax6_vat5" class="bg-slate-800 text-white">销售税 6% + VAT 5%</option>
-                                <option value="tax15_vat5" class="bg-slate-800 text-white">利润税 15% + VAT 5%</option>
-                            </select>
+                        <div class="tax-control-card">
+                            <div class="tax-control-main">
+                                <div class="tax-icon"><i class="ph-bold ph-bank"></i></div>
+                                <div>
+                                    <label for="tax-system" class="tax-control-label">店铺税制</label>
+                                    <select id="tax-system" class="tax-select">
+                                        <option value="tax6">俄罗斯 简易税制: 销售税 6%</option>
+                                        <option value="tax15">俄罗斯 标准税制: 利润税 15%</option>
+                                        <option value="tax6_vat5">俄罗斯 销售税 6% + VAT 5%</option>
+                                        <option value="tax15_vat5">俄罗斯 利润税 15% + VAT 5%</option>
+                                        <option value="tax11_all_in">11% 全包税制 (免3%损耗)</option>
+                                        <option value="kg_ecommerce2">吉尔吉斯斯坦: 电子商务税 2%</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <p id="tax-formula-hint" class="tax-formula-hint">平均售价 × 6%，另扣货损3%与回款损耗3%</p>
                         </div>
                         
                         <div class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm hidden">
@@ -484,9 +864,32 @@
                             <input type="number" id="global-rate" value="12" class="w-16 px-2 py-1 text-sm font-bold text-brand-600 focus:outline-none text-center">
                         </div>
 
-                        <button onclick="processRealData()" class="px-6 py-2 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md hover:bg-brand-500 hover:shadow-lg transition-all flex items-center gap-2">
+                        <button onclick="processRealData()" class="primary-action">
                             <i class="ph-bold ph-rocket-launch"></i> 生成精算报表
                         </button>
+                    </div>
+                </div>
+
+                <div id="brief-kpi-strip" class="brief-kpi-strip hidden">
+                    <div class="brief-kpi-card">
+                        <div class="brief-kpi-label"><i class="ph-bold ph-tag"></i> 平均售价</div>
+                        <div class="brief-kpi-value"><span id="brief-kpi-avg-price">0.00</span><span class="brief-kpi-unit">₽</span></div>
+                    </div>
+                    <div class="brief-kpi-card">
+                        <div class="brief-kpi-label"><i class="ph-bold ph-receipt"></i> 平均应缴税金</div>
+                        <div class="brief-kpi-value"><span id="brief-kpi-tax">0.00</span><span class="brief-kpi-unit">₽/件</span></div>
+                    </div>
+                    <div class="brief-kpi-card">
+                        <div class="brief-kpi-label"><i class="ph-bold ph-coins"></i> 平均单件净利润</div>
+                        <div id="brief-kpi-profit-wrap" class="brief-kpi-value"><span id="brief-kpi-profit">0.00</span><span class="brief-kpi-unit">RMB</span></div>
+                    </div>
+                    <div class="brief-kpi-card">
+                        <div class="brief-kpi-label"><i class="ph-bold ph-trend-up"></i> 平均净利润率</div>
+                        <div id="brief-kpi-margin-wrap" class="brief-kpi-value"><span id="brief-kpi-margin">0.0</span><span class="brief-kpi-unit">%</span></div>
+                    </div>
+                    <div class="brief-kpi-card">
+                        <div class="brief-kpi-label"><i class="ph-bold ph-chart-line"></i> 平均投资回报率</div>
+                        <div id="brief-kpi-roi-wrap" class="brief-kpi-value"><span id="brief-kpi-roi">0.0</span><span class="brief-kpi-unit">%</span></div>
                     </div>
                 </div>
 
@@ -510,18 +913,18 @@
                         <tbody id="briefTableBody" class="text-sm"></tbody>
                     </table>
                 </div>
-            </div>
 
-            <!-- SKU Summary Bar -->
-            <div id="summary-bar" class="fixed bottom-8 right-8 bg-slate-800/95 backdrop-blur-xl border border-slate-700 text-white px-5 py-3 rounded-2xl shadow-floating transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-6 pointer-events-none">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center"><i class="ph-bold ph-sigma text-lg"></i></div>
-                    <div><p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">求和 (SUM)</p><p class="font-mono font-bold text-sm" id="sum-val">0.00</p></div>
+                <!-- 表格选区统计状态栏 -->
+                <div id="summary-bar" class="selection-summary transform translate-y-20 opacity-0">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-white/10 text-indigo-300 flex items-center justify-center"><i class="ph-bold ph-sigma text-lg"></i></div>
+                        <div><p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">求和 SUM</p><p class="font-mono font-bold text-sm" id="sum-val">0.00</p></div>
+                    </div>
+                    <div class="w-px h-7 bg-slate-600"></div>
+                    <div><p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">平均 AVG</p><p class="font-mono font-bold text-sm" id="avg-val">0.00</p></div>
+                    <div class="w-px h-7 bg-slate-600"></div>
+                    <div><p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">计数</p><p class="font-mono font-bold text-sm text-indigo-300"><span id="count-val">0</span> 个</p></div>
                 </div>
-                <div class="w-px h-8 bg-slate-600"></div>
-                <div><p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">平均 (AVG)</p><p class="font-mono font-bold text-sm" id="avg-val">0.00</p></div>
-                <div class="w-px h-8 bg-slate-600"></div>
-                <div><p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">计数</p><p class="font-mono font-bold text-sm text-brand-400"><span id="count-val">0</span> 个</p></div>
             </div>
         </div>
         
@@ -566,6 +969,7 @@
         window.onload = function() {
             loadCostDB();
             renderCostTable();
+            updateTaxFormulaHint();
             switchGlobalTab('import');
         };
 
@@ -576,8 +980,8 @@
             
             document.getElementById('module-' + tabId).style.display = (tabId === 'sku' ? 'flex' : 'block');
             
-            const activeClass = 'px-5 py-2 rounded-lg bg-white text-brand-700 font-extrabold shadow-md transition-all text-sm flex items-center gap-2';
-            const inactiveClass = 'px-5 py-2 rounded-lg text-white/90 font-medium hover:bg-white/10 hover:text-white transition-all text-sm flex items-center gap-2';
+            const activeClass = 'global-nav-item global-nav-active px-4 py-2 text-brand-700 font-extrabold transition-all text-sm flex items-center gap-2';
+            const inactiveClass = 'global-nav-item px-4 py-2 text-slate-500 font-semibold hover:bg-slate-100 hover:text-slate-800 transition-all text-sm flex items-center gap-2';
             
             ['import', 'dashboard', 'sku'].forEach(id => {
                 document.getElementById('gtab-' + id).className = inactiveClass;
@@ -927,7 +1331,7 @@
                     labels: ['最终净利润', '商品成本(COGS)', '佣金', '物流', '仓储', '银行收单', '其它/推广', '验收', '罚款'],
                     datasets: [{
                         data: dataArr,
-                        backgroundColor: ['#10b981', '#f97316', '#d946ef', '#3b82f6', '#8b5cf6', '#f59e0b', '#64748b', '#14b8a6', '#ef4444'],
+                        backgroundColor: ['#10b981', '#f97316', '#4f46e5', '#3b82f6', '#818cf8', '#f59e0b', '#64748b', '#14b8a6', '#ef4444'],
                         borderWidth: 2, borderColor: '#ffffff', hoverOffset: 15
                     }]
                 },
@@ -949,7 +1353,7 @@
                             } 
                         },
                         datalabels: {
-                            color: '#ffffff', font: { weight: 'bold', size: 14, family: 'Plus Jakarta Sans' },
+                            color: '#ffffff', font: { weight: 'bold', size: 14, family: 'Inter' },
                             formatter: (value, ctx) => {
                                 if(sum === 0) return null;
                                 let percentage = (value * 100 / sum).toFixed(1);
@@ -1055,7 +1459,50 @@
             { key: 'unitROI', label: '单件投资回报率', type: 'percent', align: 'center', isDataBar: true, bg: 'cell-main' }
         ];
 
+        const TAX_FORMULA_HINTS = {
+            tax6: '税金＝平均售价 × 6%；另扣货损3%与回款损耗3%',
+            tax15: '账面毛利＞0时按15%计税；亏损时税金为0',
+            tax6_vat5: '税金＝售价 × 6% ＋ 售价 × (5 / 105)',
+            tax15_vat5: '税金＝正账面毛利 × 15% ＋ 售价 × (5 / 105)',
+            tax11_all_in: '税金＝售价 × 11%；保留货损3%，免回款损耗3%',
+            kg_ecommerce2: '税金＝平均售价 × 2%；另扣货损3%与回款损耗3%'
+        };
+
+        function updateTaxFormulaHint() {
+            const taxSystem = document.getElementById('tax-system').value;
+            document.getElementById('tax-formula-hint').innerText = TAX_FORMULA_HINTS[taxSystem] || '';
+        }
+
+        function updateBriefSummary(items = []) {
+            const average = (key) => {
+                const values = items.map(item => Number(item[key])).filter(Number.isFinite);
+                return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
+            };
+            const avgPrice = average('avgPrice');
+            const avgTax = average('dynamicTax');
+            const avgProfit = average('unitNetProfitRMB');
+            const avgMargin = average('unitNetProfitRate');
+            const avgROI = average('unitROI');
+
+            document.getElementById('brief-kpi-avg-price').innerText = formatMoney(avgPrice);
+            document.getElementById('brief-kpi-tax').innerText = formatMoney(avgTax);
+            document.getElementById('brief-kpi-profit').innerText = formatMoney(avgProfit);
+            document.getElementById('brief-kpi-margin').innerText = avgMargin.toFixed(1);
+            document.getElementById('brief-kpi-roi').innerText = avgROI.toFixed(1);
+
+            [
+                ['brief-kpi-profit-wrap', avgProfit],
+                ['brief-kpi-margin-wrap', avgMargin],
+                ['brief-kpi-roi-wrap', avgROI]
+            ].forEach(([id, value]) => {
+                const element = document.getElementById(id);
+                element.classList.toggle('is-positive', value > 0);
+                element.classList.toggle('is-negative', value < 0);
+            });
+        }
+
         document.getElementById('tax-system').addEventListener('change', () => {
+            updateTaxFormulaHint();
             if (skuDataList.length > 0) {
                 generateBriefData(); 
                 if (activeTab === 'brief') applyBriefFiltersAndRender();
@@ -1216,6 +1663,8 @@
                 const salesTax6 = avgPrice > 0 ? avgPrice * 0.06 : 0;
                 const profitTax15 = unitBookGrossMargin > 0 ? unitBookGrossMargin * 0.15 : 0;
                 const vat5 = avgPrice * (5 / 105);
+                const allInTax11 = avgPrice * 0.11;
+                const kgEcommerceTax2 = avgPrice * 0.02;
                 const estDamage3 = avgPrice * 0.03;
                 
                 let dynamicTax = 0;
@@ -1223,9 +1672,11 @@
                 else if (taxSystem === 'tax15') dynamicTax = profitTax15;
                 else if (taxSystem === 'tax6_vat5') dynamicTax = salesTax6 + vat5;
                 else if (taxSystem === 'tax15_vat5') dynamicTax = profitTax15 + vat5;
+                else if (taxSystem === 'tax11_all_in') dynamicTax = allInTax11;
+                else if (taxSystem === 'kg_ecommerce2') dynamicTax = kgEcommerceTax2;
                 
                 const returnAmount = unitGrossMargin - unitCostRUB - dynamicTax;
-                const returnLoss3 = returnAmount > 0 ? returnAmount * 0.03 : 0; 
+                const returnLoss3 = taxSystem === 'tax11_all_in' ? 0 : (returnAmount > 0 ? returnAmount * 0.03 : 0); 
                 const netProfitRUB = returnAmount - estDamage3 - returnLoss3;
 
                 const exRate = item.exchangeRate || 12;
@@ -1242,7 +1693,7 @@
                     pctCommission, pctBankFee, pctLogistics, pctStorage, pctAds, pctDefect, pctDamage, pctFines, pctExtra, pctTotalFees,
                     bookGrossMargin, avgPrice, totalCost, totalCostRate,
                     unitBookGrossMargin, unitGrossMargin, unitCostRUB,
-                    salesTax6, profitTax15, vat5, estDamage3, returnAmount, returnLoss3, netProfitRUB,
+                    salesTax6, profitTax15, vat5, dynamicTax, estDamage3, returnAmount, returnLoss3, netProfitRUB,
                     unitNetProfitRMB, unitNetProfitRate, unitROI
                 };
             });
@@ -1375,6 +1826,7 @@
             }
             renderBriefHeaders(); renderBriefBody();
             document.getElementById('skuCount').innerText = filteredBriefList.length;
+            updateBriefSummary(filteredBriefList);
         }
 
         function renderBriefHeaders() {
@@ -1395,7 +1847,7 @@
                     let icon = isFolded ? '<i class="ph-bold ph-plus"></i>' : '<i class="ph-bold ph-minus"></i>';
                     let btnText = isFolded ? `展开${label}` : `收起${label}`;
                     let btnClass = isFolded ? "bg-white border border-slate-300 text-slate-500 hover:text-brand-600 hover:border-brand-300 shadow-sm" : "bg-slate-200 border border-slate-300 text-slate-600 hover:bg-slate-300 shadow-inner";
-                    topWidgetHtml = `<div class="flex justify-center"><button onclick="toggleBriefGroup('${col.toggleControl}')" class="inline-flex items-center justify-center gap-1.5 px-3 py-1 text-[11px] font-black rounded-full transition-all duration-300 cursor-pointer ${btnClass}">${icon} <span>${btnText}</span></button></div>`;
+                    topWidgetHtml = `<div class="flex justify-center"><button onclick="toggleBriefGroup('${col.toggleControl}')" class="brief-group-toggle inline-flex items-center justify-center gap-1.5 px-3 py-1 text-[11px] font-black transition-all duration-300 cursor-pointer ${btnClass}">${icon} <span>${btnText}</span></button></div>`;
                 }
                 let thControlClasses = `p-2 font-extrabold select-none transition-colors bg-slate-50 ${visibilityClass}`;
                 if (col.groupBorder) thControlClasses += ` border-r-[2px] border-r-slate-400`;
@@ -1568,7 +2020,7 @@
                         cellContent = `
                             <div class="data-bar-cell">
                                 <div class="data-bar-bg ${barColor}" style="width: ${widthPct}%"></div>
-                                <span class="relative z-10 text-white font-black drop-shadow-md tracking-wide" style="text-shadow: 0 1px 3px rgba(0,0,0,0.6);">${displayVal}</span>
+                                <span class="data-bar-label relative z-10">${displayVal}</span>
                             </div>
                         `;
                         tdClass = tdClass.replace('p-2.5', 'p-1');
@@ -1604,17 +2056,20 @@
             activeTab = tab; clearSelection();
             const btnMain = document.getElementById('tab-main'); const btnBrief = document.getElementById('tab-brief');
             const boxMain = document.getElementById('mainTableContainer'); const boxBrief = document.getElementById('briefTableContainer');
+            const kpiStrip = document.getElementById('brief-kpi-strip');
 
             if(tab === 'main') {
-                btnMain.className = "px-5 py-3 rounded-t-xl font-black bg-brand-50 text-brand-700 border-b-2 border-brand-600 transition-colors flex items-center gap-2 text-sm";
-                btnBrief.className = "px-5 py-3 rounded-t-xl font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors flex items-center gap-2 text-sm";
+                btnMain.className = "sku-tab sku-tab-active";
+                btnBrief.className = "sku-tab sku-tab-inactive";
                 boxMain.style.display = 'block'; boxBrief.style.display = 'none';
+                kpiStrip.classList.add('hidden');
                 if(skuDataList.length > 0) applyFiltersAndRender();
             } else {
-                btnBrief.className = "px-5 py-3 rounded-t-xl font-black bg-slate-800 text-white border-b-2 border-slate-900 transition-colors flex items-center gap-2 text-sm";
-                btnMain.className = "px-5 py-3 rounded-t-xl font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors flex items-center gap-2 text-sm";
+                btnBrief.className = "sku-tab sku-tab-active";
+                btnMain.className = "sku-tab sku-tab-inactive";
                 boxMain.style.display = 'none'; boxBrief.style.display = 'block';
-                if(briefDataList.length > 0) applyBriefFiltersAndRender();
+                kpiStrip.classList.remove('hidden');
+                if(briefDataList.length > 0) applyBriefFiltersAndRender(); else updateBriefSummary([]);
             }
         }
 
