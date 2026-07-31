@@ -2079,10 +2079,23 @@
             const colDef = configArray.find(c => c.key === key);
             if (!colDef) return;
 
-            const dataSrc = isBrief ? briefDataList : skuDataList;
             const filterStore = isBrief ? briefActiveFilters : activeFilters;
             const hasCurrentFilter = Object.prototype.hasOwnProperty.call(filterStore, key);
             const currentFilter = hasCurrentFilter ? filterStore[key] : new Set();
+
+            // 与 Excel 一致：筛选项由“其他列当前筛选后的数据”生成，
+            // 但打开本列时暂时忽略本列自身的筛选条件。
+            const sourceData = isBrief ? briefDataList : skuDataList;
+            const dataSrc = sourceData.filter(item => {
+                for (const filterKey in filterStore) {
+                    if (filterKey === key) continue;
+                    const filterColDef = configArray.find(c => c.key === filterKey);
+                    if (!filterColDef) continue;
+                    const cellValRaw = getRawValue(item[filterKey], filterColDef.type);
+                    if (!filterStore[filterKey].has(cellValRaw)) return false;
+                }
+                return true;
+            });
             
             let uniqueValsMap = new Map();
             dataSrc.forEach(item => {
@@ -2132,36 +2145,34 @@
             document.body.appendChild(popup);
             activePopup = popup;
 
-            // 首次输入搜索词时自动取消原有全选/旧选择，省去手动点击“清空”。
-            // 用户随后可直接勾选目标项，或点击“全选”选择当前搜索结果。
-            let resetSelectionOnSearch = true;
-            popup.querySelector('.filter-search').addEventListener('input', (e) => {
+            const searchInput = popup.querySelector('.filter-search');
+
+            // Excel 式搜索：
+            // 1. 输入内容后，命中的可见项自动勾选；
+            // 2. 未命中的隐藏项自动取消勾选；
+            // 3. 搜索框清空时只恢复显示全部，不破坏刚才形成的选择。
+            searchInput.addEventListener('input', (e) => {
                 const t = e.target.value.trim().toLocaleLowerCase();
-                if (t && resetSelectionOnSearch) {
-                    popup.querySelectorAll('.filter-cb').forEach(cb => { cb.checked = false; });
-                    resetSelectionOnSearch = false;
-                }
                 popup.querySelectorAll('.filter-list label').forEach(lbl => {
                     const isMatch = lbl.querySelector('span').innerText.toLocaleLowerCase().includes(t);
                     lbl.style.display = isMatch ? 'flex' : 'none';
+                    if (t) lbl.querySelector('.filter-cb').checked = isMatch;
                 });
             });
-            popup.querySelector('.filter-list').addEventListener('change', (e) => {
-                if (e.target.classList.contains('filter-cb')) resetSelectionOnSearch = false;
-            });
             popup.querySelector('.btn-sel-all').addEventListener('click', () => {
-                resetSelectionOnSearch = false;
                 popup.querySelectorAll('.filter-cb').forEach(cb => { if(cb.closest('label').style.display !== 'none') cb.checked = true; });
             });
             popup.querySelector('.btn-clear-all').addEventListener('click', () => {
-                resetSelectionOnSearch = false;
                 popup.querySelectorAll('.filter-cb').forEach(cb => { if(cb.closest('label').style.display !== 'none') cb.checked = false; });
             });
             
             popup.querySelector('.btn-apply').addEventListener('click', () => {
                 const selected = new Set();
+                const hasSearchText = searchInput.value.trim().length > 0;
                 popup.querySelectorAll('.filter-cb').forEach(cb => { 
-                    if (cb.checked) {
+                    const isVisibleSearchResult = cb.closest('label').style.display !== 'none';
+                    // 搜索状态下只提交当前可见结果，隐藏的历史勾选不会混入筛选。
+                    if (cb.checked && (!hasSearchText || isVisibleSearchResult)) {
                         const rawIndex = Number(cb.dataset.filterIndex);
                         if (Number.isInteger(rawIndex) && rawIndex >= 0 && rawIndex < sortedRawVals.length) {
                             selected.add(sortedRawVals[rawIndex]);
